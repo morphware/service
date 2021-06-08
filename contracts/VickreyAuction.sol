@@ -41,7 +41,7 @@ contract VickreyAuction {
     mapping(address => uint) staleBids;
 
     event AuctionEnded(
-        address winner, 
+        address indexed winner, 
         uint secondHighestBid
     );
     /* event BidPlaced(
