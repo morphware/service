@@ -214,6 +214,7 @@ contract VickreyAuction {
         auctions[_endUser][_auctionId].secondHighestBid = auctions[_endUser][_auctionId].highestBid;
         auctions[_endUser][_auctionId].highestBid = _amount;
         auctions[_endUser][_auctionId].highestBidder = _bidder;
+        // TODO Possible cruft below
         /* emit BidPlaced(
             auctions[_endUser][_auctionId].highestBidder,
             auctions[_endUser][_auctionId].highestBid); */
