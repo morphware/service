@@ -112,14 +112,15 @@ contract JobFactory {
         uint _revealTimeSpan,
         uint _workerReward
     ) public {
+        // TODO Possible cruft below
         // FIXME
-        uint jobId;
+        //uint jobId;
         /* if (jobs[msg.sender].auctionId != 0) {
             jobId = jobs[msg.sender].length - 1;
         } else {
             jobId = 0;
         } */
-        jobId = jobs[msg.sender].length;
+        uint jobId = jobs[msg.sender].length;
         vickreyAuction.start(
             _minimumPayout,
             _biddingTimeSpan,
@@ -153,7 +154,12 @@ contract JobFactory {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
         require(jobs[msg.sender][_id].status == Status.PostedJobDescription,'Job has not been posted');
         jobs[msg.sender][_id].status = Status.SharedUntrainedModelAndTrainingDataset;
-        jobs[msg.sender][_id].workerNode = vickreyAuction.auctions(_jobPoster,_id).highestBidder();
+        // TODO Possible cruft below
+        //address x;
+        //(,,,,,,x,) = vickreyAuction.auctions(_jobPoster,_id);
+        //jobs[msg.sender][_id].workerNode = vickreyAuction.auctions(_jobPoster,_id).highestBidder;
+        //jobs[msg.sender][_id].workerNode = x;
+        (,,,,,,jobs[msg.sender][_id].workerNode,) = vickreyAuction.auctions(_jobPoster,_id);
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
             _id,
@@ -195,6 +201,7 @@ contract JobFactory {
     ) public {
         require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Job has not been started');
         jobs[msg.sender][_id].status = Status.ApprovedJob;
+        // TODO Possible cruft below
         // FIXME
         //vickreyAuction.payout();
         emit JobApproved(
