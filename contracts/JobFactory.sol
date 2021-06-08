@@ -145,6 +145,7 @@ contract JobFactory {
     /// @notice The untrained model and the training dataset have been encrypted
     ///         with the `workerNode` public key and `_jobPoster` private key
     function shareUntrainedModelAndTrainingDataset(
+        address _jobPoster,
         uint _id,
         bytes32 _untrainedModelMagnetLink,
         bytes32 _trainingDatasetMagnetLink
@@ -152,7 +153,7 @@ contract JobFactory {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
         require(jobs[msg.sender][_id].status == Status.PostedJobDescription,'Job has not been posted');
         jobs[msg.sender][_id].status = Status.SharedUntrainedModelAndTrainingDataset;
-        jobs[msg.sender][_id].workerNode = vickreyAuction.highestBidder();
+        jobs[msg.sender][_id].workerNode = vickreyAuction.auctions(_jobPoster,_id).highestBidder();
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
             _id,
