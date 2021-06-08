@@ -16,14 +16,14 @@ contract VickreyAuction {
         uint auctionId;
     }
 
-    uint public minimumPayout;
+    /* uint public minimumPayout;
     uint public biddingDeadline;
     uint public revealDeadline;
 
     address public endUser;
     address public highestBidder;
     uint public highestBid;
-    uint public secondHighestBid;
+    uint public secondHighestBid; */
 
     struct Auction {
         uint minimumPayout;
@@ -37,12 +37,17 @@ contract VickreyAuction {
     }
 
     mapping(address => Auction[]) public auctions;
-
     mapping(address => Bid[]) bids;
     mapping(address => uint) staleBids;
 
-    event AuctionEnded(address winner, uint secondHighestBid);
-    event BidPlaced(address bidder, uint amount);
+    event AuctionEnded(
+        address winner, 
+        uint secondHighestBid
+    );
+    /* event BidPlaced(
+        address bidder,
+        uint amount
+    ); */
 
     error TooEarly(uint time);
     error TooLate(uint time);
@@ -209,9 +214,9 @@ contract VickreyAuction {
         auctions[_endUser][_auctionId].secondHighestBid = auctions[_endUser][_auctionId].highestBid;
         auctions[_endUser][_auctionId].highestBid = _amount;
         auctions[_endUser][_auctionId].highestBidder = _bidder;
-        emit BidPlaced(
+        /* emit BidPlaced(
             auctions[_endUser][_auctionId].highestBidder,
-            auctions[_endUser][_auctionId].highestBid);
+            auctions[_endUser][_auctionId].highestBid); */
         return true;
     }
 }
