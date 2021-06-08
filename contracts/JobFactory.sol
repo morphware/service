@@ -42,9 +42,9 @@ contract JobFactory {
     VickreyAuction vickreyAuction;
 
     event JobDescriptionPosted(
-        address indexed jobPoster,
-        uint indexed id,
-        address indexed auctionAddress,
+        address jobPoster,
+        uint id,
+        address auctionAddress,
         uint16 estimatedTrainingTime,
         uint32 trainingDatasetSize,
         uint workerReward
