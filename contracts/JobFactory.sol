@@ -42,35 +42,35 @@ contract JobFactory {
     VickreyAuction vickreyAuction;
 
     event JobDescriptionPosted(
-        address jobPoster,
-        uint id,
-        address auctionAddress,
-        uint16 estimatedTrainingTime,
-        uint32 trainingDatasetSize,
-        uint workerReward
+        address indexed jobPoster,
+        uint indexed id,
+        address indexed auctionAddress,
+        uint16 indexed estimatedTrainingTime,
+        uint32 indexed trainingDatasetSize,
+        uint indexed workerReward
     );
 
     event UntrainedModelAndTrainingDatasetShared(
-        address jobPoster,
-        uint id,
-        address workerNode,
+        address indexed jobPoster,
+        uint indexed id,
+        address indexed workerNode,
         bytes32 untrainedModelMagnetLink,
         bytes32 trainingDatasetMagnetLink,
         uint64 targetErrorRate
     );
 
     event TrainedModelShared(
-        address jobPoster,
-        uint id,
-        address workerNode,
+        address indexed jobPoster,
+        uint indexed id,
+        address indexed workerNode,
         bytes32 trainedModelMagnetLink,
         uint64 trainingErrorRate
     );
 
     event JobApproved(
-        address jobPoster,
-        uint id,
-        address workerNode
+        address indexed jobPoster,
+        uint indexed id,
+        address indexed workerNode
     );
 
     enum Status {
