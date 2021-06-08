@@ -45,9 +45,9 @@ contract JobFactory {
         address indexed jobPoster,
         uint indexed id,
         address indexed auctionAddress,
-        uint16 indexed estimatedTrainingTime,
-        uint32 indexed trainingDatasetSize,
-        uint indexed workerReward
+        uint16 estimatedTrainingTime,
+        uint32 trainingDatasetSize,
+        uint workerReward
     );
 
     event UntrainedModelAndTrainingDatasetShared(
