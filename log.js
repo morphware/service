@@ -6,6 +6,12 @@ morphwareToken.transfer(accounts[4],400);
 
 vickreyAuction = await VickreyAuction.deployed();
 
+morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});
+
+morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});
+
+morphwareToken.transfer(accounts[1],100);
+
 // TODO Automate the transfer of MWT (`worker-reward`) in `daemon:main.js`
 morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});
 
@@ -16,11 +22,9 @@ endUserBalance.toString();  // Should be equal to 300
 
 jobFactoryContract = await JobFactory.deployed();
 
-morphwareToken.transfer(accounts[1],100);
 morphwareToken.transfer(accounts[2],200);
 morphwareToken.transfer(accounts[3],300);
 
-morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});
 morphwareToken.approve(vickreyAuction.address,23,{from:accounts[2]});
 morphwareToken.approve(vickreyAuction.address,34,{from:accounts[3]});
 
