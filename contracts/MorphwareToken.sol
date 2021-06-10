@@ -6,6 +6,6 @@ import "./ERC20Burnable.sol";
 
 contract MorphwareToken is ERC20, ERC20Burnable {
     constructor() ERC20("MorphwareToken", "MWT") {
-        _mint(msg.sender, 1000000000 * 10 ** decimals());
+        _mint(msg.sender, 1232922769 * 10 ** decimals());
     }
 }
