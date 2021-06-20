@@ -6,4 +6,4 @@ rm -f build/contracts/*
 
 npx truffle migrate --network development
 
-node setup.js
+#node setup.js --trace-warnings
