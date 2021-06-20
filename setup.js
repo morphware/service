@@ -1,9 +1,8 @@
-#!/usr/bin/env node
 const fs   = require('fs');
 const path = require('path');
 const Web3 = require('web3');
 
-const provider = new Web3.providers.WebsocketProvider('ws://localhost:8545');
+const provider = new Web3.providers.HttpProvider('http://localhost:8545');
 const web3     = new Web3(provider);
 
 const auctionFactoryContractAddress = '0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B';
@@ -27,3 +26,4 @@ morphwareTokenContract.methods.approve(auctionFactoryContract._address,12).send(
 console.log('\nBootstrap script finished running.');
 
 process.exit();
+
