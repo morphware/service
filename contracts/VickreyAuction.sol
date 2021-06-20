@@ -77,8 +77,8 @@ contract VickreyAuction {
     // Have end-user actually transfer the funds and then check that the reward amount is equal to it
     function start(
         uint _minimumPayout,
-        uint _biddingTimeSpan,
-        uint _revealTimeSpan,
+        uint _biddingDeadline,
+        uint _revealDeadline,
         uint _reward,
         address _endUser
     )
@@ -87,8 +87,8 @@ contract VickreyAuction {
         auctions[_endUser].push(Auction({
             minimumPayout: _minimumPayout,
             reward: _reward,
-            biddingDeadline: block.timestamp + _biddingTimeSpan,
-            revealDeadline: block.timestamp + _biddingTimeSpan + _revealTimeSpan,
+            biddingDeadline: _biddingDeadline,
+            revealDeadline: _revealDeadline,
             highestBid: 0,
             secondHighestBid: 0,
             highestBidder: address(0),
