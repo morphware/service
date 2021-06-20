@@ -9,13 +9,11 @@ addition to seeding the models and datasets onto BitTorrent.
 It's current implementation is limited to handling the first event,
 `JobDescriptionPosted`.  The other events are listed as follows:
 
-- JobFactory
-    1. JobDescriptionPosted
-    3. UntrainedModelAndTrainingDatasetShared
-    4. TrainedModelShared
-    5. JobApproved
-- AuctionFactory
-    2. AuctionEnded
+1. JobDescriptionPosted
+2. AuctionEnded (from: AuctionFactory)
+3. UntrainedModelAndTrainingDatasetShared
+4. TrainedModelShared
+5. JobApproved
 
 ## Getting Started (sequence?)
 
