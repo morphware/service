@@ -1,5 +1,7 @@
-// Before Posting Job, but after `redeploy.sh`
+// Before Posting Job, but after `redeploy.sh` ("bare necessities" to start demo.)
 
+/// @dev Account 4 is a data scientist, and they want their ML workload to be run by someone on the network
+/// @dev Account 1 is a gamer with a gaming rig, and they end-up winning the auction
 morphwareToken = await MorphwareToken.deployed();
 
 morphwareToken.transfer(accounts[4],400);
@@ -8,12 +10,11 @@ vickreyAuction = await VickreyAuction.deployed();
 
 morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});
 
-morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});
+//morphwareToken.transfer(accounts[1],100);
+morphwareToken.transfer(accounts[1],10000);
 
-morphwareToken.transfer(accounts[1],100);
-
-// TODO Automate the transfer of MWT (`worker-reward`) in `daemon:main.js`
-morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});
+//morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});
+morphwareToken.approve(vickreyAuction.address,10000,{from:accounts[1]});
 
 var endUserBalance = await morphwareToken.balanceOf(accounts[4]);
 endUserBalance.toString();  // Should be equal to 300
