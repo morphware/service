@@ -21,7 +21,9 @@ This section is currently limited to Ubuntu 20.04.
 
 ### Ubuntu 20.04
 
-TODO
+Install NodeJS dependencies:
+
+`npm install`
 
 ## Usage
 
@@ -61,6 +63,10 @@ to the development blockchain and seeds `accounts[1]`; `accounts[2]`;
 ### Command Line (e.g., bash)
 
 The following commands should be entered into a terminal emulator.
+
+This section is also currently limited to Ubuntu 20.04.
+
+#### Ubuntu 20.04
 
 Start the local blockchain:
 `npx ganache-cli --deterministic`
