@@ -10,9 +10,13 @@ while `VickreyAuction` is solely focused on the job auction-process.
 
 ## Installation
 
+This section is currently limited to Linux.
+
+### Linux
+
 This section is currently limited to Ubuntu 20.04.
 
-### Ubuntu 20.04
+#### Ubuntu 20.04
 
 Install NodeJS dependencies:
 
