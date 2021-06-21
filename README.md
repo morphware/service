@@ -82,6 +82,11 @@ Start the development console:
 
 The following commands should be entered into the development console.
 
+#### Bare Necessities
+
+This section is limited to the set of commands required for
+`procJobDescriptionPosted` in `../daemon/worker.js` to run.
+
 `morphwareToken = await MorphwareToken.deployed();`
 
 `morphwareToken.transfer(accounts[4],400);`
@@ -94,8 +99,13 @@ The following commands should be entered into the development console.
 
 `morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});`
 
+###### Optional Checks
+
 `var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
+
 `endUserBalance.toString();  // Should be equal to 300`
+
+#### Full Functionality
 
 // Beginnning of Bidding Phase
 
