@@ -87,6 +87,8 @@ The following commands should be entered into the development console.
 This section is limited to the set of commands required for
 `procJobDescriptionPosted` in `../daemon/worker.js` to run.
 
+# FIXME (below this demarcation)
+
 `morphwareToken = await MorphwareToken.deployed();`
 
 `morphwareToken.transfer(accounts[4],400);`
@@ -105,65 +107,140 @@ This section is limited to the set of commands required for
 
 `endUserBalance.toString();  // Should be equal to 300`
 
-#### Full Functionality
+#### Full Demonstration
 
-// Beginnning of Bidding Phase
+##### Set-up
 
-jobFactoryContract = await JobFactory.deployed();
+Instatiate `MorphwareToken` contract:
 
-morphwareToken.transfer(accounts[2],200);
-morphwareToken.transfer(accounts[3],300);
+`morphwareToken = await MorphwareToken.deployed();`
 
-morphwareToken.approve(vickreyAuction.address,23,{from:accounts[2]});
-morphwareToken.approve(vickreyAuction.address,34,{from:accounts[3]});
+Instatiate `JobFactory` contract:
 
-vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(11,false,'0x6d6168616d000000000000000000000000000000000000000000000000000000')),11,{from:accounts[1]});
-vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(22,false,'0x6e6168616d000000000000000000000000000000000000000000000000000000')),22,{from:accounts[2]});
-vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(33,true,'0x6f6168616d000000000000000000000000000000000000000000000000000000')),33,{from:accounts[3]});
+`jobFactoryContract = await JobFactory.deployed();`
 
-var auctionInstance = await vickreyAuction.auctions(accounts[4],0);
-auctionInstance.biddingDeadline.toString();
-auctionInstance.revealDeadline.toString();
+Instatiate `VickreyAuction` contract:
 
-// End of Bidding Phase
-// Beginning of Revealing Phase
+`vickreyAuction = await VickreyAuction.deployed();`
 
-vickreyAuction.reveal(accounts[4],0,[11],[false],['0x6d6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[1]});
-vickreyAuction.reveal(accounts[4],0,[22],[false],['0x6e6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[2]});
-vickreyAuction.reveal(accounts[4],0,[33],[true],['0x6f6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[3]});
+##### Beginnning of Bidding Phase
 
-var lowestBidderBalance = await morphwareToken.balanceOf(accounts[1]);
-lowestBidderBalance.toString();  // Should be equal to 89
+###### TBD
 
-vickreyAuction.withdraw({from:accounts[1]});
+*TODO* Include a note about how these are from accounts[0], if no account is specified
 
-var lowestBidderBalance = await morphwareToken.balanceOf(accounts[1]);
-lowestBidderBalance.toString();  // Should be equal to 100
+`morphwareToken.transfer(accounts[1],100);`
 
-var highestBidderBalance = await morphwareToken.balanceOf(accounts[2]);
-highestBidderBalance.toString(); // Should be equal to 178
+`morphwareToken.transfer(accounts[2],200);`
 
-var fakeBidderBalance = await morphwareToken.balanceOf(accounts[3]);
-fakeBidderBalance.toString();    // Should be equal to 300
+`morphwareToken.transfer(accounts[3],300);`
 
+`morphwareToken.transfer(accounts[4],400);`
 
-// End of Revealing Phase
+###### TBD
 
-vickreyAuction.auctionEnd(accounts[4],0);
+*TODO* Include a note about how the following should happen from `../daemon/main.js`
 
-var endUserBalance = await morphwareToken.balanceOf(accounts[4]);
-endUserBalance.toString();    // Should be equal to 300 (i.e., original-balance minus worker-reward)
+`morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
 
-var auctionContractBalance = await morphwareToken.balanceOf(vickreyAuction.address);
-auctionContractBalance.toString();     // Should be equal to 122 (i.e., worker-reward plus the highest-bid)
+###### TBD
 
-vickreyAuction.payout(accounts[4],0);
+`morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});`
 
-var auctionContractBalance = await morphwareToken.balanceOf(vickreyAuction.address);
-auctionContractBalance.toString();     // Should equal to 0 (i.e., worker-reward)
+`morphwareToken.approve(vickreyAuction.address,23,{from:accounts[2]});`
 
-var endUserBalance = await morphwareToken.balanceOf(accounts[4]);
-endUserBalance.toString();    // Was equal to 311
+`morphwareToken.approve(vickreyAuction.address,34,{from:accounts[3]});`
 
-var highestBidderBalance = await morphwareToken.balanceOf(accounts[2]);
-highestBidderBalance.toString(); // Was equal to 289
+###### TBD
+
+`vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(11,false,'0x6d6168616d000000000000000000000000000000000000000000000000000000')),11,{from:accounts[1]});`
+
+`vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(22,false,'0x6e6168616d000000000000000000000000000000000000000000000000000000')),22,{from:accounts[2]});`
+
+`vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(33,true,'0x6f6168616d000000000000000000000000000000000000000000000000000000')),33,{from:accounts[3]});`
+
+###### TBD
+
+`var auctionInstance = await vickreyAuction.auctions(accounts[4],0);`
+
+`auctionInstance.biddingDeadline.toString();`
+
+`auctionInstance.revealDeadline.toString();`
+
+##### End of Bidding Phase and Beginning of Revealing Phase
+
+###### TBD
+
+`vickreyAuction.reveal(accounts[4],0,[11],[false],['0x6d6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[1]});`
+
+`vickreyAuction.reveal(accounts[4],0,[22],[false],['0x6e6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[2]});`
+
+`vickreyAuction.reveal(accounts[4],0,[33],[true],['0x6f6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[3]});`
+
+###### TBD
+
+`var lowestBidderBalance = await morphwareToken.balanceOf(accounts[1]);`
+
+`lowestBidderBalance.toString();  // Should be equal to 89`
+
+###### TBD
+
+`vickreyAuction.withdraw({from:accounts[1]});`
+
+###### TBD
+
+`var lowestBidderBalance = await morphwareToken.balanceOf(accounts[1]);`
+
+`lowestBidderBalance.toString();  // Should be equal to 100`
+
+###### TBD
+
+`var highestBidderBalance = await morphwareToken.balanceOf(accounts[2]);`
+
+`highestBidderBalance.toString(); // Should be equal to 178`
+
+###### TBD
+
+`var fakeBidderBalance = await morphwareToken.balanceOf(accounts[3]);`
+
+`fakeBidderBalance.toString();    // Should be equal to 300`
+
+##### End of Revealing Phase
+
+###### TBD
+
+`vickreyAuction.auctionEnd(accounts[4],0);`
+
+###### TBD
+
+`var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
+
+`endUserBalance.toString();    // Should be equal to 300 (i.e., original-balance minus worker-reward)`
+
+###### TBD
+
+`var auctionContractBalance = await morphwareToken.balanceOf(vickreyAuction.address);`
+
+`auctionContractBalance.toString();     // Should be equal to 122 (i.e., worker-reward plus the highest-bid)`
+
+###### TBD
+
+`vickreyAuction.payout(accounts[4],0);`
+
+###### TBD
+
+`var auctionContractBalance = await morphwareToken.balanceOf(vickreyAuction.address);`
+
+`auctionContractBalance.toString();     // Should equal to 0 (i.e., worker-reward)`
+
+###### TBD
+
+`var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
+
+`endUserBalance.toString();    // Was equal to 311`
+
+###### TBD
+
+`var highestBidderBalance = await morphwareToken.balanceOf(accounts[2]);`
+
+`highestBidderBalance.toString(); // Was equal to 289`
