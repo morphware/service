@@ -66,13 +66,16 @@ This section is also currently limited to Ubuntu 20.04.
 #### Ubuntu 20.04
 
 Start the local blockchain:
+
 `npx ganache-cli --deterministic`
 
 In a separate terminal, migrate the `MorphwareToken`, `JobFactory`, and
 `AuctionFactory` contracts to the local blockchain:
+
 `./redeploy.sh`
 
 Start the development console:
+
 `npx truffle console --network development`
 
 ### Development Console (i.e., Truffle)
