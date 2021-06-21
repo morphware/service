@@ -6,7 +6,7 @@
 Morphware Token (i.e., `../token`).
 
 `JobFactory` is handles the majority of interaction with `../daemon`,
-while `VickreyAuction` is solely focused on the auction-process.
+while `VickreyAuction` is solely focused on the job auction-process.
 
 ## Installation
 
