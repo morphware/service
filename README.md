@@ -2,18 +2,11 @@
 
 ## Description
 
-`service` is the back-end runtime that handles requests from the
-`../client` and interacts with the smart contracts in `../service`, in
-addition to seeding the models and datasets onto BitTorrent.
+`service` contains the smart contracts that are not directly related to
+Morphware Token (i.e., `../token`).
 
-It's current implementation is limited to handling the first event,
-`JobDescriptionPosted`.  The other events are listed as follows:
-
-1. `JobDescriptionPosted`
-2. `AuctionEnded` (from: `AuctionFactory`)
-3. `UntrainedModelAndTrainingDatasetShared`
-4. `TrainedModelShared`
-5. `JobApproved`
+`JobFactory` is handles the majority of interaction with `../daemon`,
+while `VickreyAuction` is solely focused on the auction-process.
 
 ## Installation
 
