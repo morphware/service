@@ -87,17 +87,29 @@ The following commands should be entered into the development console.
 This section is limited to the set of commands required for
 `procJobDescriptionPosted` in `../daemon/worker.js` to run.
 
-# FIXME (below this demarcation)
+Instantiate the `MorphwareToken` contract:
 
 `morphwareToken = await MorphwareToken.deployed();`
 
+This seeds the end-user's account with Morphware Tokens:
+
 `morphwareToken.transfer(accounts[4],400);`
+
+Instantiate the `VickreyAuction` contract:
 
 `vickreyAuction = await VickreyAuction.deployed();`
 
+This manually seeds the `VickreyAuction` contract with Morphware Tokens
+and should happen in `../daemon/main.js`:
+
 `morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
 
+This seeds the worker-node's account with Morphware Tokens:
+
 `morphwareToken.transfer(accounts[1],100);`
+
+This pre-approves the transfer of a number of Morphware Tokens from the
+worker-node's wallet to the `VickreyAuction` contract:
 
 `morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});`
 
