@@ -156,6 +156,10 @@ Morphware Tokens, seed the `VickreyAuction` contract with that amount:
 
 `morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
 
+Post description of machine learning workload:
+
+`jobFactoryContract.postJobDescription(8,1024,9,10,60,90,100,{from: accounts[4]});`
+
 Pre-approve the transfer of the bid amounts to the `VickreyAuction`
 contract:
 
