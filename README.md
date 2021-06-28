@@ -227,39 +227,35 @@ Return bid-amount to the bidder who was out-bid:
 
 ##### End of Revealing Phase
 
-###### TBD
+End the auction:
 
 `vickreyAuction.auctionEnd(accounts[4],0);`
 
-###### TBD
+###### Optional Checks
 
 `var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
 
 `endUserBalance.toString();    // Should be equal to 300 (i.e., original-balance minus worker-reward)`
 
-###### TBD
-
 `var auctionContractBalance = await morphwareToken.balanceOf(vickreyAuction.address);`
 
 `auctionContractBalance.toString();     // Should be equal to 122 (i.e., worker-reward plus the highest-bid)`
 
-###### TBD
+Pay the worker-node:
+
+*Note: this should only be called after the model has been trained.*
 
 `vickreyAuction.payout(accounts[4],0);`
 
-###### TBD
+###### Optional Checks
 
 `var auctionContractBalance = await morphwareToken.balanceOf(vickreyAuction.address);`
 
 `auctionContractBalance.toString();     // Should equal to 0 (i.e., worker-reward)`
 
-###### TBD
-
 `var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
 
 `endUserBalance.toString();    // Was equal to 311`
-
-###### TBD
 
 `var highestBidderBalance = await morphwareToken.balanceOf(accounts[2]);`
 
