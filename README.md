@@ -127,45 +127,42 @@ required to demonstrate the functionality described in `Usage`.
 
 ##### Set-up
 
-Instatiate `MorphwareToken` contract:
+Instatiate the relevant smart contracts in the development console:
 
 `morphwareToken = await MorphwareToken.deployed();`
-
-Instatiate `JobFactory` contract:
-
 `jobFactoryContract = await JobFactory.deployed();`
-
-Instatiate `VickreyAuction` contract:
-
 `vickreyAuction = await VickreyAuction.deployed();`
 
-##### Beginnning of Bidding Phase
+Seed the accounts described in `Usage` with Morphware Tokens:
 
-###### TBD
-
-*TODO* Include a note about how these are from accounts[0], if no account is specified
+*Note: these calls are from `accounts[0]`.  If no account is specified,
+in the dictionary-like object / last parameter, it is safe to assume
+that the calls are from `accounts[0]`.*
 
 `morphwareToken.transfer(accounts[1],100);`
-
 `morphwareToken.transfer(accounts[2],200);`
-
 `morphwareToken.transfer(accounts[3],300);`
-
 `morphwareToken.transfer(accounts[4],400);`
 
-###### TBD
+Assuming that the total reward posted by the data scientist is 100
+Morphware Tokens, seed the `VickreyAuction` contract with that amount:
 
-*TODO* Include a note about how the following should happen from `../daemon/main.js`
+*Note: the following functionality should occur `../daemon/main.js`.*
 
 `morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
 
-###### TBD
+Pre-approve the transfer of the bid amounts to the `VickreyAuction`
+contract:
+
+*Note: this is required so that the `VickreyAuction` contract can
+transfer Morphware Tokens from each of the candidate worker-nodes
+to itself.*
 
 `morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});`
-
 `morphwareToken.approve(vickreyAuction.address,23,{from:accounts[2]});`
-
 `morphwareToken.approve(vickreyAuction.address,34,{from:accounts[3]});`
+
+##### Beginnning of Bidding Phase
 
 ###### TBD
 
