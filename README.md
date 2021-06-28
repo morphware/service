@@ -113,7 +113,7 @@ worker-node's wallet to the `VickreyAuction` contract:
 
 `morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});`
 
-###### Optional Checks
+###### Optional Check
 
 `var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
 
@@ -171,7 +171,9 @@ to itself.*
 
 ##### Beginnning of Bidding Phase
 
-###### TBD
+Submit bids:
+
+*Note: see `Usage` for details.*
 
 `vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(11,false,'0x6d6168616d000000000000000000000000000000000000000000000000000000')),11,{from:accounts[1]});`
 
@@ -179,7 +181,7 @@ to itself.*
 
 `vickreyAuction.bid(accounts[4],0,web3.utils.keccak256(web3.utils.encodePacked(33,true,'0x6f6168616d000000000000000000000000000000000000000000000000000000')),33,{from:accounts[3]});`
 
-###### TBD
+###### Optional Checks
 
 `var auctionInstance = await vickreyAuction.auctions(accounts[4],0);`
 
@@ -189,7 +191,9 @@ to itself.*
 
 ##### End of Bidding Phase and Beginning of Revealing Phase
 
-###### TBD
+Reveal bids:
+
+*Note: see `Usage` for details.*
 
 `vickreyAuction.reveal(accounts[4],0,[11],[false],['0x6d6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[1]});`
 
@@ -197,29 +201,25 @@ to itself.*
 
 `vickreyAuction.reveal(accounts[4],0,[33],[true],['0x6f6168616d000000000000000000000000000000000000000000000000000000'],{from:accounts[3]});`
 
-###### TBD
+###### Optional Check
 
 `var lowestBidderBalance = await morphwareToken.balanceOf(accounts[1]);`
 
 `lowestBidderBalance.toString();  // Should be equal to 89`
 
-###### TBD
+Return bid-amount to the bidder who was out-bid:
 
 `vickreyAuction.withdraw({from:accounts[1]});`
 
-###### TBD
+###### Optional Checks
 
 `var lowestBidderBalance = await morphwareToken.balanceOf(accounts[1]);`
 
 `lowestBidderBalance.toString();  // Should be equal to 100`
 
-###### TBD
-
 `var highestBidderBalance = await morphwareToken.balanceOf(accounts[2]);`
 
 `highestBidderBalance.toString(); // Should be equal to 178`
-
-###### TBD
 
 `var fakeBidderBalance = await morphwareToken.balanceOf(accounts[3]);`
 
