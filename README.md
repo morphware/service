@@ -267,8 +267,8 @@ Pay the worker-node:
 
 `var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
 
-`endUserBalance.toString();    // Was equal to 311`
+`endUserBalance.toString();    // Should be equal to 311`
 
 `var highestBidderBalance = await morphwareToken.balanceOf(accounts[2]);`
 
-`highestBidderBalance.toString(); // Was equal to 289`
+`highestBidderBalance.toString(); // Should be equal to 289`
