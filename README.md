@@ -149,17 +149,6 @@ that the calls are from `accounts[0]`.*
 
 `morphwareToken.transfer(accounts[4],400);`
 
-Assuming that the total reward posted by the data scientist is 100
-Morphware Tokens, seed the `VickreyAuction` contract with that amount:
-
-*Note: the following functionality should occur `../daemon/main.js`.*
-
-`morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
-
-Post description of machine learning workload:
-
-`jobFactoryContract.postJobDescription(8,1024,9,10,60,90,100,{from: accounts[4]});`
-
 Pre-approve the transfer of the bid amounts to the `VickreyAuction`
 contract:
 
@@ -172,6 +161,17 @@ to itself.*
 `morphwareToken.approve(vickreyAuction.address,23,{from:accounts[2]});`
 
 `morphwareToken.approve(vickreyAuction.address,34,{from:accounts[3]});`
+
+Assuming that the total reward posted by the data scientist is 100
+Morphware Tokens, seed the `VickreyAuction` contract with that amount:
+
+*Note: the following functionality should occur `../daemon/main.js`.*
+
+`morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
+
+Post description of machine learning workload:
+
+`jobFactoryContract.postJobDescription(8,1024,9,10,60,90,100,{from: accounts[4]});`
 
 ##### Beginnning of Bidding Phase
 
