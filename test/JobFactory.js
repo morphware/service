@@ -41,13 +41,13 @@ contract('JobFactory', (accounts) => {
         const targetErrorRateArg       = 9;
         const minimumPayoutArg         = 10;
         const currentTimestamp         = Math.floor(new Date().getTime() / 1000);
-        const biddingTimeSpanArg       = currentTimestamp + 600;
-        const revealTimeSpanArg        = biddingTimeSpanArg + 30;
+        const biddingDeadlineArg       = currentTimestamp + 600;
+        const revealDeadlineArg        = biddingDeadlineArg + 30;
 
         // TEST
         console.log(currentTimestamp);
-        console.log(biddingTimeSpanArg);
-        console.log(revealTimeSpanArg);
+        console.log(biddingDeadlineArg);
+        console.log(revealDeadlineArg);
 
         const workerRewardArg          = 100;
         const result = await jobFactory.postJobDescription(
@@ -55,8 +55,8 @@ contract('JobFactory', (accounts) => {
                         trainingDatasetSizeArg,
                         targetErrorRateArg,
                         minimumPayoutArg,
-                        biddingTimeSpanArg,
-                        revealTimeSpanArg,
+                        biddingDeadlineArg,
+                        revealDeadlineArg,
                         workerRewardArg,
                         {from: dataScientist});
         assert.equal(result.logs[0].args.jobPoster, dataScientist);
@@ -85,13 +85,13 @@ contract('JobFactory', (accounts) => {
         const targetErrorRateArg       = 9;
         const minimumPayoutArg         = 10;
         const currentTimestamp         = Math.floor(new Date().getTime() / 1000);
-        const biddingTimeSpanArg       = currentTimestamp + 600;
-        const revealTimeSpanArg        = biddingTimeSpanArg + 30;
+        const biddingDeadlineArg       = currentTimestamp + 600;
+        const revealDeadlineArg        = biddingDeadlineArg + 30;
 
         // TEST
         console.log(currentTimestamp);
-        console.log(biddingTimeSpanArg);
-        console.log(revealTimeSpanArg);
+        console.log(biddingDeadlineArg);
+        console.log(revealDeadlineArg);
 
         const workerRewardArg          = 100;
         let result = await jobFactory.postJobDescription(
@@ -99,8 +99,8 @@ contract('JobFactory', (accounts) => {
                         trainingDatasetSizeArg,
                         targetErrorRateArg,
                         minimumPayoutArg,
-                        biddingTimeSpanArg,
-                        revealTimeSpanArg,
+                        biddingDeadlineArg,
+                        revealDeadlineArg,
                         workerRewardArg,
                         {from: dataScientist});
 
