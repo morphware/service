@@ -40,7 +40,7 @@ contract('JobFactory', (accounts) => {
         const trainingDatasetSizeArg   = 1024;
         const targetErrorRateArg       = 9;
         const minimumPayoutArg         = 10;
-        const currentTimestamp         = Math.floor(new Date().getTime() / 1000)
+        const currentTimestamp         = Math.floor(new Date().getTime() / 1000);
         const biddingTimeSpanArg       = currentTimestamp + 600;
         const revealTimeSpanArg        = biddingTimeSpanArg + 30;
 
@@ -84,7 +84,7 @@ contract('JobFactory', (accounts) => {
         const trainingDatasetSizeArg   = 1024;
         const targetErrorRateArg       = 9;
         const minimumPayoutArg         = 10;
-        const currentTimestamp         = Math.floor(new Date().getTime() / 1000)
+        const currentTimestamp         = Math.floor(new Date().getTime() / 1000);
         const biddingTimeSpanArg       = currentTimestamp + 600;
         const revealTimeSpanArg        = biddingTimeSpanArg + 30;
 
