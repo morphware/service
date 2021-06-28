@@ -40,8 +40,15 @@ contract('JobFactory', (accounts) => {
         const trainingDatasetSizeArg   = 1024;
         const targetErrorRateArg       = 9;
         const minimumPayoutArg         = 10;
-        const biddingTimeSpanArg       = 600;
-        const revealTimeSpanArg        = 60;
+        const currentTimestamp         = Math.floor(new Date().getTime() / 1000)
+        const biddingTimeSpanArg       = currentTimestamp + 600;
+        const revealTimeSpanArg        = biddingTimeSpanArg + 30;
+
+        // TEST
+        console.log(currentTimestamp);
+        console.log(biddingTimeSpanArg);
+        console.log(revealTimeSpanArg);
+
         const workerRewardArg          = 100;
         const result = await jobFactory.postJobDescription(
                         estimatedTrainingTimeArg,
@@ -77,8 +84,15 @@ contract('JobFactory', (accounts) => {
         const trainingDatasetSizeArg   = 1024;
         const targetErrorRateArg       = 9;
         const minimumPayoutArg         = 10;
-        const biddingTimeSpanArg       = 600;
-        const revealTimeSpanArg        = 60;
+        const currentTimestamp         = Math.floor(new Date().getTime() / 1000)
+        const biddingTimeSpanArg       = currentTimestamp + 600;
+        const revealTimeSpanArg        = biddingTimeSpanArg + 30;
+
+        // TEST
+        console.log(currentTimestamp);
+        console.log(biddingTimeSpanArg);
+        console.log(revealTimeSpanArg);
+
         const workerRewardArg          = 100;
         let result = await jobFactory.postJobDescription(
                         estimatedTrainingTimeArg,
