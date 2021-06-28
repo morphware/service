@@ -173,7 +173,7 @@ Calculate deadlines:
 
 `const currentTimestamp = Math.floor(new Date().getTime() / 1000);`
 
-`const biddingDeadline = currentTimestamp + 600;`
+`const biddingDeadline = currentTimestamp + 60;`
 
 `const revealDeadline = biddingDeadline + 30;`
 
