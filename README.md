@@ -130,7 +130,9 @@ required to demonstrate the functionality described in `Usage`.
 Instatiate the relevant smart contracts in the development console:
 
 `morphwareToken = await MorphwareToken.deployed();`
+
 `jobFactoryContract = await JobFactory.deployed();`
+
 `vickreyAuction = await VickreyAuction.deployed();`
 
 Seed the accounts described in `Usage` with Morphware Tokens:
@@ -140,8 +142,11 @@ in the dictionary-like object / last parameter, it is safe to assume
 that the calls are from `accounts[0]`.*
 
 `morphwareToken.transfer(accounts[1],100);`
+
 `morphwareToken.transfer(accounts[2],200);`
+
 `morphwareToken.transfer(accounts[3],300);`
+
 `morphwareToken.transfer(accounts[4],400);`
 
 Assuming that the total reward posted by the data scientist is 100
@@ -159,7 +164,9 @@ transfer Morphware Tokens from each of the candidate worker-nodes
 to itself.*
 
 `morphwareToken.approve(vickreyAuction.address,12,{from:accounts[1]});`
+
 `morphwareToken.approve(vickreyAuction.address,23,{from:accounts[2]});`
+
 `morphwareToken.approve(vickreyAuction.address,34,{from:accounts[3]});`
 
 ##### Beginnning of Bidding Phase
