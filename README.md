@@ -121,6 +121,10 @@ worker-node's wallet to the `VickreyAuction` contract:
 
 #### Full Demonstration
 
+This section is broader in scope than the development scenario
+described in `Bare Necessities`, and limited to the set of commands
+required to demonstrate the functionality described in `Usage`.
+
 ##### Set-up
 
 Instatiate `MorphwareToken` contract:
