@@ -169,9 +169,17 @@ Morphware Tokens, seed the `VickreyAuction` contract with that amount:
 
 `morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
 
+Calculate deadlines:
+
+`const currentTimestamp = Math.floor(new Date().getTime() / 1000);`
+
+`const biddingDeadline = currentTimestamp + 600;`
+
+`const revealDeadline = biddingDeadline + 30;`
+
 Post description of machine learning workload:
 
-`jobFactoryContract.postJobDescription(8,1024,9,10,60,90,100,{from: accounts[4]});`
+`jobFactoryContract.postJobDescription(8,1024,9,10,biddingDeadline,revealDeadline,100,{from: accounts[4]});`
 
 ##### Beginnning of Bidding Phase
 
