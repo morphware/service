@@ -112,7 +112,7 @@ worker-node's wallet to the `VickreyAuction` contract:
 
 `var endUserBalance = await morphwareToken.balanceOf(accounts[4]);`
 
-`endUserBalance.toString();  // Should be equal to 300`
+`endUserBalance.toString();  // Should be equal to 400`
 
 #### Full Demonstration
 
