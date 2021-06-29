@@ -99,11 +99,6 @@ Instantiate the `VickreyAuction` contract:
 
 `vickreyAuction = await VickreyAuction.deployed();`
 
-This manually seeds the `VickreyAuction` contract with Morphware Tokens
-and should happen in `../daemon/main.js`:
-
-`morphwareToken.transfer(vickreyAuction.address,100,{from:accounts[4]});`
-
 This seeds the worker-node's account with Morphware Tokens:
 
 `morphwareToken.transfer(accounts[1],100);`
