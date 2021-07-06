@@ -41,7 +41,9 @@ contract VickreyAuction {
     mapping(address => uint) staleBids;
 
     event AuctionEnded(
-        address indexed winner, 
+        address indexed endUser,
+        uint auctionId,
+        address winner, 
         uint secondHighestBid
     );
     /* event BidPlaced(
@@ -171,6 +173,8 @@ contract VickreyAuction {
     {
         if (auctions[_endUser][_auctionId].ended) revert AuctionEndAlreadyCalled();
         emit AuctionEnded(
+            _endUser,
+            _auctionId,
             auctions[_endUser][_auctionId].highestBidder,
             auctions[_endUser][_auctionId].secondHighestBid);
         auctions[_endUser][_auctionId].ended = true;
