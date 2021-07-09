@@ -106,6 +106,8 @@ contract('JobFactory', (accounts) => {
 
         const jobPosterArg                 = dataScientist;
         const idArg                        = 0;
+
+        // FIXME Cast `untrainedModelMagnetLinkArg` and `trainingDatasetMagnetLinkArg` as `bytes32` objects:
         const untrainedModelMagnetLinkArg  = padding + '4fd0d60d0dec15eca14e50fbd725785293788643';
         const trainingDatasetMagnetLinkArg = padding + '44ce6a14a1b7d742accb427a42409dd24bb5fae1';
         result = await jobFactory.shareUntrainedModelAndTrainingDataset(
