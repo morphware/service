@@ -54,8 +54,8 @@ contract JobFactory {
         address indexed jobPoster,
         uint indexed id,
         address indexed workerNode,
-        bytes32 untrainedModelMagnetLink,
-        bytes32 trainingDatasetMagnetLink,
+        string untrainedModelMagnetLink,
+        string trainingDatasetMagnetLink,
         uint64 targetErrorRate
     );
 
@@ -63,7 +63,7 @@ contract JobFactory {
         address indexed jobPoster,
         uint indexed id,
         address indexed workerNode,
-        bytes32 trainedModelMagnetLink,
+        string trainedModelMagnetLink,
         uint64 trainingErrorRate
     );
 
@@ -148,8 +148,8 @@ contract JobFactory {
     function shareUntrainedModelAndTrainingDataset(
         address _jobPoster,
         uint _id,
-        bytes32 _untrainedModelMagnetLink,
-        bytes32 _trainingDatasetMagnetLink
+        string _untrainedModelMagnetLink,
+        string _trainingDatasetMagnetLink
     ) public {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
         require(jobs[msg.sender][_id].status == Status.PostedJobDescription,'Job has not been posted');
@@ -177,7 +177,7 @@ contract JobFactory {
     function shareTrainedModel(
         address _jobPoster,
         uint _id,
-        bytes32 _trainedModelMagnetLink,
+        string _trainedModelMagnetLink,
         uint64 _trainingErrorRate
     ) public {
         require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
