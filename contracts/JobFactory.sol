@@ -148,8 +148,8 @@ contract JobFactory {
     function shareUntrainedModelAndTrainingDataset(
         address _jobPoster,
         uint _id,
-        string _untrainedModelMagnetLink,
-        string _trainingDatasetMagnetLink
+        string memory _untrainedModelMagnetLink,
+        string memory _trainingDatasetMagnetLink
     ) public {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
         require(jobs[msg.sender][_id].status == Status.PostedJobDescription,'Job has not been posted');
@@ -177,7 +177,7 @@ contract JobFactory {
     function shareTrainedModel(
         address _jobPoster,
         uint _id,
-        string _trainedModelMagnetLink,
+        string memory _trainedModelMagnetLink,
         uint64 _trainingErrorRate
     ) public {
         require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
