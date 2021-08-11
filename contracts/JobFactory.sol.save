@@ -199,7 +199,8 @@ contract JobFactory {
         address _jobPoster,
         uint _id
     ) public {
-        require(msg.sender != jobs[_jobPoster][_id].workerNode,'msg.sender cannot equal workerNode');
+        require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
+        require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
         require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
         jobs[msg.sender][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
