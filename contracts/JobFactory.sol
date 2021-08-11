@@ -4,13 +4,13 @@ pragma solidity 0.8.4;
 import './IERC20.sol';
 import './VickreyAuction.sol';
 
-///@dev This implementation describes the following scenario,
+///@dev This implementation originally described the following scenario,
 ///     for demonstration purposes:
 //
 ///          `_jobPoster` --> `workerNode`
 ///          `_jobPoster` <-- `workerNode`
 //
-///      There are no `reviewerNodes`, in this use-case
+///      It now has some notion of validator / `reviewerNodes`.
 
 ///////////////////////////////////////////////////////////////////////////////
 // Notes for elsewhere
@@ -69,8 +69,9 @@ contract JobFactory {
 
     event JobApproved(
         address indexed jobPoster,
-        uint indexed id,
-        address indexed workerNode
+        uint id,
+        address indexed workerNode,
+        address indexed validatorNode
     );
 
     enum Status {
@@ -194,21 +195,22 @@ contract JobFactory {
 
     }
 
-    /// @dev This is being called by `_jobPoster`
+    /// @dev This is being called by a validator node
     function approveJob(
         address _jobPoster,
         uint _id
     ) public {
         require(msg.sender != jobs[_jobPoster][_id].workerNode,'msg.sender cannot equal workerNode');
         require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
-        jobs[msg.sender][_id].status = Status.ApprovedJob;
+        jobs[_jobPoster][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
         // FIXME
         //vickreyAuction.payout();
         emit JobApproved(
-            msg.sender,
+            _jobPoster,
             _id,
-            jobs[_jobPoster][_id].workerNode
+            jobs[_jobPoster][_id].workerNode,
+            msg.sender
         );
     }
 }
