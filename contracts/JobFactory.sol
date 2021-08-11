@@ -181,7 +181,7 @@ contract JobFactory {
         uint64 _trainingErrorRate
     ) public {
         require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
-        require(jobs[_jobPoster][_id].status == Status.PostedJobDescription,'Job has not been started');
+        require(jobs[_jobPoster][_id].status == Status.SharedUntrainedModelAndTrainingDataset,'Untrained model and training dataset has not been shared');
         require(jobs[_jobPoster][_id].targetErrorRate >= _trainingErrorRate,'targetErrorRate must be greater or equal to _trainingErrorRate');
         jobs[_jobPoster][_id].status = Status.SharedTrainedModel;
         emit TrainedModelShared(
@@ -199,7 +199,7 @@ contract JobFactory {
         address _jobPoster,
         uint _id
     ) public {
-        require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Job has not been started');
+        require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
         jobs[msg.sender][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
         // FIXME
