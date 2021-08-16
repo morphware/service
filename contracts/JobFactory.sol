@@ -71,7 +71,8 @@ contract JobFactory {
         address indexed jobPoster,
         uint id,
         address indexed workerNode,
-        address indexed validatorNode
+        address indexed validatorNode,
+        string trainedModelMagnetLink 
     );
 
     enum Status {
@@ -198,19 +199,21 @@ contract JobFactory {
     /// @dev This is being called by a validator node
     function approveJob(
         address _jobPoster,
-        uint _id
+        uint _id,
+        string memory _trainedModelMagnetLink
     ) public {
         require(msg.sender != jobs[_jobPoster][_id].workerNode,'msg.sender cannot equal workerNode');
         require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
         jobs[_jobPoster][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
         // FIXME
-        //vickreyAuction.payout();
+        //vickreyAuction.payout(_jobPoster,_id);
         emit JobApproved(
             _jobPoster,
             _id,
             jobs[_jobPoster][_id].workerNode,
-            msg.sender
+            msg.sender,
+            _trainedModelMagnetLink             
         );
     }
 }
