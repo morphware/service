@@ -159,7 +159,6 @@ contract JobFactory {
     /// TODO Replace `_jobPoster` with `msg.sender`, below; and everywhere other function
     ///      that is called by `_jobPoster`.
     function shareUntrainedModelAndTrainingDataset(
-        address _jobPoster,
         uint _id,
         string memory _untrainedModelMagnetLink,
         string memory _trainingDatasetMagnetLink
@@ -172,7 +171,7 @@ contract JobFactory {
         //(,,,,,,x,) = vickreyAuction.auctions(_jobPoster,_id);
         //jobs[msg.sender][_id].workerNode = vickreyAuction.auctions(_jobPoster,_id).highestBidder;
         //jobs[msg.sender][_id].workerNode = x;
-        (,,,,,,jobs[msg.sender][_id].workerNode,) = vickreyAuction.auctions(_jobPoster,_id);
+        (,,,,,,jobs[msg.sender][_id].workerNode,) = vickreyAuction.auctions(msg.sender,_id);
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
             _id,
