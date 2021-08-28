@@ -155,9 +155,6 @@ contract JobFactory {
     //
     /// @notice The untrained model and the training dataset have been encrypted
     ///         with the `workerNode` public key and `_jobPoster` private key
-    //
-    /// TODO Replace `_jobPoster` with `msg.sender`, below; and everywhere other function
-    ///      that is called by `_jobPoster`.
     function shareUntrainedModelAndTrainingDataset(
         uint _id,
         string memory _untrainedModelMagnetLink,
