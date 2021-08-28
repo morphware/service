@@ -230,7 +230,7 @@ contract JobFactory {
         string memory _trainedModelMagnetLink
     ) public {
         require(msg.sender != jobs[_jobPoster][_id].workerNode,'msg.sender cannot equal workerNode');
-        require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
+        require(jobs[_jobPoster][_id].status == Status.SharedTestingDataset,'Testing dataset has not been shared');
         jobs[_jobPoster][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
         // FIXME
