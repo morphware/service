@@ -87,6 +87,7 @@ contract JobFactory {
         PostedJobDescription,
         SharedUntrainedModelAndTrainingDataset,
         SharedTrainedModel,
+        SharedTestingDataset,
         ApprovedJob
     }
 
