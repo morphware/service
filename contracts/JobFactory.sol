@@ -67,6 +67,14 @@ contract JobFactory {
         uint64 trainingErrorRate
     );
 
+    event TestingDatasetShared(
+        address indexed jobPoster,
+        uint indexed id,
+        string trainedModelMagnetLink,
+        string testingDatasetMagnetLink,
+        uint64 targetErrorRate
+    );
+
     event JobApproved(
         address indexed jobPoster,
         uint id,
@@ -147,6 +155,9 @@ contract JobFactory {
     //
     /// @notice The untrained model and the training dataset have been encrypted
     ///         with the `workerNode` public key and `_jobPoster` private key
+    //
+    /// TODO Replace `_jobPoster` with `msg.sender`, below; and everywhere other function
+    ///      that is called by `_jobPoster`.
     function shareUntrainedModelAndTrainingDataset(
         address _jobPoster,
         uint _id,
@@ -174,7 +185,7 @@ contract JobFactory {
 
     /// @dev This is being called by `workerNode`
     //
-    /// @notice The trained model has been encrypted with the `_jobPoster`s
+    /// TODO @notice The trained model has been encrypted with the `_jobPoster`s
     ///         public key and `workerNode` private key
     function shareTrainedModel(
         address _jobPoster,
@@ -193,7 +204,26 @@ contract JobFactory {
             _trainedModelMagnetLink,
             _trainingErrorRate
         );
+    }
 
+    /// @dev This is being called by `_jobPoster`
+    //
+    /// TODO Have `../daemon` look-up the `trainedModelMagnetLink`
+    ///      in the logs instead of re-parameterizing it, below.
+    function shareTestingDataset(
+        uint _id,
+        string memory _trainedModelMagnetLink,
+        string memory _testingDatasetMagnetLink
+    ) public {
+        require(jobs[msg.sender][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
+        jobs[msg.sender][_id].status = Status.SharedTestingDataset;
+        emit TestingDatasetShared(
+            msg.sender,
+            _id,
+            _trainedModelMagnetLink,
+            _testingDatasetMagnetLink,
+            jobs[msg.sender][_id].targetErrorRate
+        );
     }
 
     /// @dev This is being called by a validator node
