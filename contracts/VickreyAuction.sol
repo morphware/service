@@ -10,9 +10,11 @@ contract VickreyAuction {
 
     IERC20 public token;
 
+    // TODO Pack the following struct
     struct Bid {
         bytes32 blindedBid;
         uint deposit;
+        address jobPoster;
         uint auctionId;
     }
 
@@ -115,6 +117,7 @@ contract VickreyAuction {
         bids[msg.sender].push(Bid({
             blindedBid: _blindedBid,
             deposit: _amount,
+            jobPoster: _endUser,
             auctionId: _auctionId
         }));
     }
@@ -131,13 +134,14 @@ contract VickreyAuction {
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
         uint numberOfBids = bids[msg.sender].length;
+        // TODO Uncomment the follow checks:
         // require(_amounts.length == numberOfBids,'_amounts.length must be equal to numberOfBids');
         // require(_fake.length == numberOfBids,'_fake.length must be equal to numberOfBids');
         // require(_secret.length == numberOfBids,'_secret.length must be equal to numberOfBids');
         uint refund;
         for (uint i = 0; i < numberOfBids; i++) {
             Bid storage bidToCheck = bids[msg.sender][i];
-            if (bidToCheck.auctionId == _auctionId) {
+            if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
                 (uint amount, bool fake, bytes32 secret) = (_amounts[i], _fake[i], _secret[i]);
                 if (bidToCheck.blindedBid != keccak256(abi.encodePacked(amount, fake, secret))) {
                     continue;
