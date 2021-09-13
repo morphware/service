@@ -169,7 +169,7 @@ contract JobFactory {
         //(,,,,,,x,) = vickreyAuction.auctions(_jobPoster,_id);
         //jobs[msg.sender][_id].workerNode = vickreyAuction.auctions(_jobPoster,_id).highestBidder;
         //jobs[msg.sender][_id].workerNode = x;
-        (,,,,,,jobs[msg.sender][_id].workerNode,) = vickreyAuction.auctions(msg.sender,_id);
+        (,,,,,,,jobs[msg.sender][_id].workerNode,) = vickreyAuction.auctions(msg.sender,_id);
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
             _id,
