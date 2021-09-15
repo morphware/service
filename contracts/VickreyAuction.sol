@@ -37,6 +37,7 @@ contract VickreyAuction {
         uint secondHighestBid;
         address highestBidder;
         bool ended;
+        bool notPaid;
     }
 
     mapping(address => Auction[]) public auctions;
@@ -98,7 +99,8 @@ contract VickreyAuction {
             highestBid: 0,
             secondHighestBid: 0,
             highestBidder: address(0),
-            ended: false
+            ended: false,
+            notPaid: true
         }));
     }
 
@@ -194,7 +196,7 @@ contract VickreyAuction {
         public
     {
         require(auctions[_endUser][_auctionId].ended, 'VickreyAuction has not ended');
-
+        require(auctions[_endUser][_auctionId].notPaid, 'VickreyAuction has been paid-out');
         if (auctions[_endUser][_auctionId].bidsPlaced == 0) {
             token.transfer(_endUser, auctions[_endUser][_auctionId].reward);
         } else {
@@ -206,7 +208,7 @@ contract VickreyAuction {
             // TODO 1 Replace the `transfer` invocation with a safer alternative
             token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
         }
-
+        auctions[_endUser][_auctionId].notPaid = false;
     }
 
     function placeBid(
