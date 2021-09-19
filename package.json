@@ -2,9 +2,10 @@
   "name": "service",
   "version": "0.0.5",
   "description": "The service contracts for Morphware",
-  "main": "index.js",
+  "main": "",
   "scripts": {
-    "test": "npx truffle test"
+    "test": "npx truffle test",
+    "coverage": "npx truffle run coverage"
   },
   "keywords": [],
   "author": "Morphware",
@@ -13,6 +14,7 @@
     "@openzeppelin/contracts": "^4.1.0",
     "@openzeppelin/test-helpers": "^0.5.11",
     "ganache-cli": "^6.12.2",
+    "solidity-coverage": "^0.7.17",
     "truffle": "^5.3.6"
   }
 }

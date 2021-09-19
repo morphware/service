@@ -2,3 +2,5 @@ node_modules/
 *.sw?
 build/
 TODO.md
+coverage/
+coverage.json

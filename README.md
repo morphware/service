@@ -74,3 +74,7 @@ reach out on #dev for help.
 
 The unit tests are run with `npm test`. They presume Ganache CLI is running
 (q.v. Initial Steps for more information).
+
+Coverage is run with `npm coverage`. Currently, this is not hooked into the
+unit testing process. It will eventually be hooked in where a drop in coverage
+will fail the test run, even if the tests themselves pass.
