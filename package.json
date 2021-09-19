@@ -8,8 +8,17 @@
     "coverage": "npx truffle run coverage"
   },
   "keywords": [],
-  "author": "Morphware",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morphware/service.git"
+  },
+  "author": {
+    "name": "Morphware Engineering",
+    "email": "engineering@morphware.com"
+  },
+  "bugs": {
+    "url": "https://github.com/morphware/service/issues"
+  },
   "devDependencies": {
     "@openzeppelin/contracts": "^4.1.0",
     "@openzeppelin/test-helpers": "^0.5.11",
