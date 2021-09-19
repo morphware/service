@@ -89,6 +89,8 @@ contract JobFactory {
         address workerNode;
     }
 
+    // Client -> Job(s)
+    // FIXME: auctionId is per-EVM basis - this is single-threading assumption
     mapping (address => Job[]) public jobs;
 
     IERC20 public token;

@@ -45,9 +45,11 @@ contract('JobFactory', (accounts) => {
         const revealDeadlineArg        = biddingDeadlineArg + 30;
 
         // TEST
+        /*
         console.log(currentTimestamp);
         console.log(biddingDeadlineArg);
         console.log(revealDeadlineArg);
+        */
 
         const workerRewardArg          = 100;
         const result = await jobFactory.postJobDescription(
@@ -89,9 +91,11 @@ contract('JobFactory', (accounts) => {
         const revealDeadlineArg        = biddingDeadlineArg + 30;
 
         // TEST
+        /*
         console.log(currentTimestamp);
         console.log(biddingDeadlineArg);
         console.log(revealDeadlineArg);
+        */
 
         const workerRewardArg          = 100;
         let result = await jobFactory.postJobDescription(
