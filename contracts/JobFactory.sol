@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
+// vim: noai:ts=4:sw=4
+
 pragma solidity 0.8.4;
 
 import './IERC20.sol';
@@ -89,6 +91,8 @@ contract JobFactory {
         address workerNode;
     }
 
+    // Client -> Job(s)
+    // FIXME: auctionId is per-EVM basis - this is single-threading assumption
     mapping (address => Job[]) public jobs;
 
     IERC20 public token;

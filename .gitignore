@@ -1,3 +1,6 @@
 node_modules/
-*.swp
+*.sw?
 build/
+TODO.md
+coverage/
+coverage.json

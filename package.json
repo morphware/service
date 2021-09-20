@@ -1,18 +1,29 @@
 {
-  "name": "learn",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "service",
+  "version": "0.0.5",
+  "description": "The service contracts for Morphware",
+  "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx truffle test",
+    "coverage": "npx truffle run coverage"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morphware/service.git"
+  },
+  "author": {
+    "name": "Morphware Engineering",
+    "email": "engineering@morphware.com"
+  },
+  "bugs": {
+    "url": "https://github.com/morphware/service/issues"
+  },
   "devDependencies": {
     "@openzeppelin/contracts": "^4.1.0",
     "@openzeppelin/test-helpers": "^0.5.11",
     "ganache-cli": "^6.12.2",
+    "solidity-coverage": "^0.7.17",
     "truffle": "^5.3.6"
   }
 }
