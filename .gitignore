@@ -1,3 +1,8 @@
 node_modules/
 *.swp
 .secret*
+*.sw?
+build/
+TODO.md
+coverage/
+coverage.json
