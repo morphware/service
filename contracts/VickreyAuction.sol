@@ -98,7 +98,7 @@ contract VickreyAuction {
             bidsPlaced: 0,
             highestBid: 0,
             secondHighestBid: 0,
-            highestBidder: address(0),
+            highestBidder: _endUser,
             ended: false,
             notPaid: true
         }));
