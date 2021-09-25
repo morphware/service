@@ -12,9 +12,11 @@ contract VickreyAuction {
 
     IERC20 public token;
 
+    // TODO Pack the following struct
     struct Bid {
         bytes32 blindedBid;
         uint deposit;
+        address jobPoster;
         uint auctionId;
     }
 
@@ -32,10 +34,12 @@ contract VickreyAuction {
         uint reward;
         uint biddingDeadline;
         uint revealDeadline;
+        uint bidsPlaced;
         uint highestBid;
         uint secondHighestBid;
         address highestBidder;
         bool ended;
+        bool notPaid;
     }
 
     mapping(address => Auction[]) public auctions;
@@ -93,10 +97,12 @@ contract VickreyAuction {
             reward: _reward,
             biddingDeadline: _biddingDeadline,
             revealDeadline: _revealDeadline,
+            bidsPlaced: 0,
             highestBid: 0,
             secondHighestBid: 0,
-            highestBidder: address(0),
-            ended: false
+            highestBidder: _endUser,
+            ended: false,
+            notPaid: true
         }));
     }
 
@@ -117,6 +123,7 @@ contract VickreyAuction {
         bids[msg.sender].push(Bid({
             blindedBid: _blindedBid,
             deposit: _amount,
+            jobPoster: _endUser,
             auctionId: _auctionId
         }));
     }
@@ -133,13 +140,14 @@ contract VickreyAuction {
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
         uint numberOfBids = bids[msg.sender].length;
+        // TODO Uncomment the follow checks:
         // require(_amounts.length == numberOfBids,'_amounts.length must be equal to numberOfBids');
         // require(_fake.length == numberOfBids,'_fake.length must be equal to numberOfBids');
         // require(_secret.length == numberOfBids,'_secret.length must be equal to numberOfBids');
         uint refund;
         for (uint i = 0; i < numberOfBids; i++) {
             Bid storage bidToCheck = bids[msg.sender][i];
-            if (bidToCheck.auctionId == _auctionId) {
+            if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
                 (uint amount, bool fake, bytes32 secret) = (_amounts[i], _fake[i], _secret[i]);
                 if (bidToCheck.blindedBid != keccak256(abi.encodePacked(amount, fake, secret))) {
                     continue;
@@ -190,16 +198,19 @@ contract VickreyAuction {
         public
     {
         require(auctions[_endUser][_auctionId].ended, 'VickreyAuction has not ended');
-        // TODO 1 Replace the `transfer` invocation with a safer alternative
-
-        //FIXME
-        token.transfer(_endUser, auctions[_endUser][_auctionId].secondHighestBid);
-        uint leftover = auctions[_endUser][_auctionId].highestBid - auctions[_endUser][_auctionId].secondHighestBid;
-        // TODO n Does `auctions[_endUser][_auctionId].reward` need to be set to `0`, like `amount` is in other places?
-        uint workerPay = leftover + auctions[_endUser][_auctionId].reward;
-        // TODO 4 Optimize the `transfer` of `leftover` to `highestBidder`
-        // TODO 1 Replace the `transfer` invocation with a safer alternative
-        token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
+        require(auctions[_endUser][_auctionId].notPaid, 'VickreyAuction has been paid-out');
+        if (auctions[_endUser][_auctionId].bidsPlaced == 0) {
+            token.transfer(_endUser, auctions[_endUser][_auctionId].reward);
+        } else {
+            // TODO 1 Replace the `transfer` invocation with a safer alternative
+            uint leftover = auctions[_endUser][_auctionId].highestBid - auctions[_endUser][_auctionId].secondHighestBid;
+            // TODO n Does `auctions[_endUser][_auctionId].reward` need to be set to `0`, like `amount` is in other places?
+            uint workerPay = leftover + auctions[_endUser][_auctionId].reward;
+            // TODO 4 Optimize the `transfer` of `leftover` to `highestBidder`
+            // TODO 1 Replace the `transfer` invocation with a safer alternative
+            token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
+        }
+        auctions[_endUser][_auctionId].notPaid = false;
     }
 
     function placeBid(
@@ -224,6 +235,7 @@ contract VickreyAuction {
         /* emit BidPlaced(
             auctions[_endUser][_auctionId].highestBidder,
             auctions[_endUser][_auctionId].highestBid); */
+        auctions[_endUser][_auctionId].bidsPlaced += 1;
         return true;
     }
 }
