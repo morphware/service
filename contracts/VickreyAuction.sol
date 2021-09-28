@@ -43,8 +43,8 @@ contract VickreyAuction {
     }
 
     mapping(address => Auction[]) public auctions;
-    mapping(address => Bid[]) bids;
-    mapping(address => uint) staleBids;
+    mapping(address => Bid[]) public bids;
+    mapping(address => uint) public staleBids;
 
     event AuctionEnded(
         address indexed endUser,
