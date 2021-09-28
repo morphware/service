@@ -224,12 +224,12 @@ contract VickreyAuction {
             // TODO 4 Optimize the `transfer` of `leftover` to `highestBidder`
             // TODO 1 Replace the `transfer` invocation with a safer alternative
             token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
+            emit PaidOut(
+                _endUser,
+                _auctionId,
+                workerPay);
         }
         auctions[_endUser][_auctionId].notPaid = false;
-        emit PaidOut(
-            _endUser,
-            _auctionId,
-            workerPay);
     }
 
     function placeBid(
