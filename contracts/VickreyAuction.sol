@@ -139,28 +139,31 @@ contract VickreyAuction {
         onlyAfter(auctions[_endUser][_auctionId].biddingDeadline)
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
-        uint numberOfBids = bids[msg.sender].length;
+        // uint numberOfBids = bids[msg.sender].length;
         // TODO Uncomment the follow checks:
         // require(_amounts.length == numberOfBids,'_amounts.length must be equal to numberOfBids');
         // require(_fake.length == numberOfBids,'_fake.length must be equal to numberOfBids');
         // require(_secret.length == numberOfBids,'_secret.length must be equal to numberOfBids');
         uint refund;
-        for (uint i = 0; i < numberOfBids; i++) {
-            Bid storage bidToCheck = bids[msg.sender][i];
-            if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
-                (uint amount, bool fake, bytes32 secret) = (_amounts[i], _fake[i], _secret[i]);
-                if (bidToCheck.blindedBid != keccak256(abi.encodePacked(amount, fake, secret))) {
-                    continue;
-                }
-                refund += bidToCheck.deposit;
-                if (!fake && bidToCheck.deposit >= amount) {
-                    if (placeBid(_endUser, _auctionId, msg.sender, amount)) {
-                        refund -= amount;
-                    }
-                }
-                bidToCheck.blindedBid = bytes32(0);
+        // for (uint i = 0; i < numberOfBids; i++) {
+
+        Bid storage bidToCheck = bids[msg.sender][0];
+        if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
+            (uint amount, bool fake, bytes32 secret) = (_amounts[0], _fake[0], _secret[0]);
+            if (bidToCheck.blindedBid != keccak256(abi.encodePacked(amount, fake, secret))) {
+                // continue;
+                return;
             }
+            refund += bidToCheck.deposit;
+            if (!fake && bidToCheck.deposit >= amount) {
+                if (placeBid(_endUser, _auctionId, msg.sender, amount)) {
+                    refund -= amount;
+                }
+            }
+            bidToCheck.blindedBid = bytes32(0);
         }
+
+        // }
         // TODO 1 Replace the `transfer` invocation with a safer alternative
         token.transfer(msg.sender,refund);
     }
