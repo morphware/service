@@ -147,7 +147,7 @@ contract VickreyAuction {
         uint refund;
         // for (uint i = 0; i < numberOfBids; i++) {
 
-        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionID,msg.sender))][0];
+        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))][0];
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
             (uint amount, bool fake, bytes32 secret) = (_amounts[0], _fake[0], _secret[0]);
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(amount, fake, secret))) {
