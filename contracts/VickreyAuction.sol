@@ -43,7 +43,7 @@ contract VickreyAuction {
     }
 
     mapping(address => Auction[]) public auctions;
-    mapping(address => Bid[]) public bids;
+    mapping(bytes32 => Bid[]) public bids;
     mapping(address => uint) public staleBids;
 
     event AuctionEnded(
@@ -120,7 +120,7 @@ contract VickreyAuction {
         require(allowedAmount >= _amount,'allowedAmount must be greater than or equal to _amount');
         // TODO  1.5 Re-factor `transferFrom` to eliminate gas costs?
         token.transferFrom(msg.sender,address(this),_amount);
-        bids[msg.sender].push(Bid({
+        bids[keccak256(abi.encodePacked(_endUser,auctionID,msg.sender))].push(Bid({
             blindedBid: _blindedBid,
             deposit: _amount,
             jobPoster: _endUser,
@@ -147,7 +147,7 @@ contract VickreyAuction {
         uint refund;
         // for (uint i = 0; i < numberOfBids; i++) {
 
-        Bid storage bidToCheck = bids[msg.sender][0];
+        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,auctionID,msg.sender))][0];
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
             (uint amount, bool fake, bytes32 secret) = (_amounts[0], _fake[0], _secret[0]);
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(amount, fake, secret))) {
@@ -229,7 +229,8 @@ contract VickreyAuction {
             return false;
         }
         if (auctions[_endUser][_auctionId].highestBidder != address(0)) {
-            staleBids[auctions[_endUser][_auctionId].highestBidder] += auctions[_endUser][_auctionId].highestBid;
+            address hb = auctions[_endUser][_auctionId].highestBidder;
+            staleBids[hb] += auctions[_endUser][_auctionId].highestBid;
         }
         auctions[_endUser][_auctionId].secondHighestBid = auctions[_endUser][_auctionId].highestBid;
         auctions[_endUser][_auctionId].highestBid = _amount;
