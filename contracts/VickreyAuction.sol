@@ -52,10 +52,18 @@ contract VickreyAuction {
         address winner, 
         uint secondHighestBid
     );
-    /* event BidPlaced(
-        address bidder,
+
+    event BidPlaced(
+        address indexed endUser,
+        uint indexed auctionID,
+        address indexed bidder
+    );
+
+    event PaidOut(
+        address indexed endUser,
+        uint indexed auctionID,
         uint amount
-    ); */
+    );
 
     error TooEarly(uint time);
     error TooLate(uint time);
@@ -126,6 +134,10 @@ contract VickreyAuction {
             jobPoster: _endUser,
             auctionId: _auctionId
         }));
+        emit BidPlaced(
+            _endUser,
+            _auctionId,
+            msg.sender);
     }
 
     function reveal(
@@ -214,6 +226,10 @@ contract VickreyAuction {
             token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
         }
         auctions[_endUser][_auctionId].notPaid = false;
+        emit PaidOut(
+            _endUser,
+            _auctionId,
+            workerPay);
     }
 
     function placeBid(
