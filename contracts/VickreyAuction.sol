@@ -55,13 +55,13 @@ contract VickreyAuction {
 
     event BidPlaced(
         address indexed endUser,
-        uint indexed auctionID,
+        uint indexed auctionId,
         address indexed bidder
     );
 
     event PaidOut(
         address indexed endUser,
-        uint indexed auctionID,
+        uint indexed auctionId,
         uint amount
     );
 
