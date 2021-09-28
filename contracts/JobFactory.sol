@@ -49,7 +49,9 @@ contract JobFactory {
         address auctionAddress,
         uint16 estimatedTrainingTime,
         uint32 trainingDatasetSize,
-        uint workerReward
+        uint workerReward,
+        uint biddingDeadline,
+        uint revealDeadline
     );
 
     event UntrainedModelAndTrainingDatasetShared(
@@ -123,8 +125,8 @@ contract JobFactory {
         uint32 _trainingDatasetSize,
         uint64 _targetErrorRate,
         uint _minimumPayout,
-        uint _biddingTimeSpan,
-        uint _revealTimeSpan,
+        uint _biddingDeadline,
+        uint _revealDeadline,
         uint _workerReward
     ) public {
         // TODO Possible cruft below
@@ -138,8 +140,8 @@ contract JobFactory {
         uint jobId = jobs[msg.sender].length;
         vickreyAuction.start(
             _minimumPayout,
-            _biddingTimeSpan,
-            _revealTimeSpan,
+            _biddingDeadline,
+            _revealDeadline,
             _workerReward,
             msg.sender);
         jobs[msg.sender].push(Job(
@@ -153,7 +155,10 @@ contract JobFactory {
             address(vickreyAuction),
             _estimatedTrainingTime,
             _trainingDatasetSize,
-            _workerReward);
+            _workerReward,
+            _biddingDeadline,
+            _revealDeadline
+        );
     }
 
     /// @dev This is being called by `_jobPoster`
