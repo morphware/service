@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.4;
 
-import './IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './VickreyAuction.sol';
 
 ///@dev This implementation originally described the following scenario,

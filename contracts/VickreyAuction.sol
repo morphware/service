@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.4;
 
-import './IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 // TODO Review all usage of `public`
 // TODO Optimize storage writes with memory
