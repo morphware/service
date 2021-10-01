@@ -123,6 +123,8 @@ contract VickreyAuction {
         public
         onlyBefore(auctions[_endUser][_auctionId].biddingDeadline)
     {
+        // FIXME Later this should be less than the worker-specific reward
+        require(_amount < auctions[_endUser][_auctionId].reward,'_amount must be less than reward');
         require(_amount > auctions[_endUser][_auctionId].minimumPayout,'_amount must be greater than minimumPayout');
         uint allowedAmount = token.allowance(msg.sender,address(this));
         require(allowedAmount >= _amount,'allowedAmount must be greater than or equal to _amount');
