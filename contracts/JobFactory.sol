@@ -51,7 +51,8 @@ contract JobFactory {
         uint32 trainingDatasetSize,
         uint workerReward,
         uint biddingDeadline,
-        uint revealDeadline
+        uint revealDeadline,
+        uint64 clientVersion
     );
 
     event UntrainedModelAndTrainingDatasetShared(
@@ -129,7 +130,7 @@ contract JobFactory {
         uint _biddingDeadline,
         uint _revealDeadline,
         uint _workerReward,
-        uint _clientVersion
+        uint64 _clientVersion
     ) public {
         // TODO Possible cruft below
         // FIXME
