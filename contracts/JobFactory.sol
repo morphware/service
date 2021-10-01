@@ -101,6 +101,7 @@ contract JobFactory {
         Status status;
         uint64 targetErrorRate;
         address workerNode;
+        uint64  clientVersion;
     }
 
     // Client -> Job(s)
@@ -127,7 +128,8 @@ contract JobFactory {
         uint _minimumPayout,
         uint _biddingDeadline,
         uint _revealDeadline,
-        uint _workerReward
+        uint _workerReward,
+        uint _clientVersion
     ) public {
         // TODO Possible cruft below
         // FIXME
@@ -148,7 +150,8 @@ contract JobFactory {
             jobId,
             Status.PostedJobDescription,
             _targetErrorRate,
-            address(0)));
+            address(0),
+            _clientVersion));
         emit JobDescriptionPosted(
             msg.sender,
             jobId,
@@ -157,7 +160,8 @@ contract JobFactory {
             _trainingDatasetSize,
             _workerReward,
             _biddingDeadline,
-            _revealDeadline
+            _revealDeadline,
+            _clientVersion
         );
     }
 
