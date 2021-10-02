@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // vim: noai:ts=4:sw=4
 
-pragma solidity 0.8.4;
+pragma solidity ^0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
@@ -10,14 +10,30 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 contract VickreyAuction {
 
-    IERC20 public token;
+    event AuctionEnded(
+        address indexed endUser,
+        uint auctionId,
+        address winner, 
+        uint secondHighestBid
+    );
 
-    // TODO Pack the following struct
+    event BidPlaced(
+        address indexed endUser,
+        uint indexed auctionId,
+        address indexed bidder
+    );
+
+    event PaidOut(
+        address indexed endUser,
+        uint indexed auctionId,
+        uint amount
+    );
+
     struct Bid {
         bytes32 blindedBid;
-        uint deposit;
         address jobPoster;
         uint auctionId;
+        uint deposit;
     }
 
     /* uint public minimumPayout;
@@ -46,24 +62,7 @@ contract VickreyAuction {
     mapping(bytes32 => Bid[]) public bids;
     mapping(address => uint) public staleBids;
 
-    event AuctionEnded(
-        address indexed endUser,
-        uint auctionId,
-        address winner, 
-        uint secondHighestBid
-    );
-
-    event BidPlaced(
-        address indexed endUser,
-        uint indexed auctionId,
-        address indexed bidder
-    );
-
-    event PaidOut(
-        address indexed endUser,
-        uint indexed auctionId,
-        uint amount
-    );
+    IERC20 public token;
 
     error TooEarly(uint time);
     error TooLate(uint time);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // vim: noai:ts=4:sw=4
 
-pragma solidity 0.8.4;
+pragma solidity ^0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './VickreyAuction.sol';
@@ -49,8 +49,7 @@ contract JobFactory {
         uint id,
         uint workerReward,
         uint biddingDeadline,
-        uint revealDeadline,
-
+        uint revealDeadline
     );
 
     event UntrainedModelAndTrainingDatasetShared(
@@ -59,7 +58,7 @@ contract JobFactory {
         address indexed workerNode,
         uint indexed id,
         string untrainedModelMagnetLink,
-        string trainingDatasetMagnetLink,
+        string trainingDatasetMagnetLink
     );
 
     event TrainedModelShared(
@@ -67,7 +66,7 @@ contract JobFactory {
         uint64 trainingErrorRate,
         address indexed workerNode,
         uint indexed id,
-        string trainedModelMagnetLink,
+        string trainedModelMagnetLink
     );
 
     event TestingDatasetShared(
@@ -75,7 +74,7 @@ contract JobFactory {
         uint64 targetErrorRate,
         uint indexed id,
         string trainedModelMagnetLink,
-        string testingDatasetMagnetLink,
+        string testingDatasetMagnetLink
     );
 
     event JobApproved(
@@ -83,7 +82,7 @@ contract JobFactory {
         address indexed workerNode,
         address indexed validatorNode,
         string trainedModelMagnetLink,
-        uint id,
+        uint id
     );
 
     enum Status {
@@ -172,11 +171,11 @@ contract JobFactory {
         jobs[msg.sender][_id] = job;
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
-            _id,
+            job.targetErrorRate,
             workerNode,
+            _id,
             _untrainedModelMagnetLink,
-            _trainingDatasetMagnetLink,
-            job.targetErrorRate
+            _trainingDatasetMagnetLink
         );
     }
 
@@ -194,14 +193,13 @@ contract JobFactory {
         require(msg.sender == job.workerNode,'msg.sender must equal workerNode');
         require(job.status == Status.SharedUntrainedModelAndTrainingDataset,'Untrained model and training dataset has not been shared');
         require(job.targetErrorRate >= _trainingErrorRate,'targetErrorRate must be greater or equal to _trainingErrorRate');
-        jobs[_jobPoster][_id] = Status.SharedTrainedModel;
+        jobs[_jobPoster][_id].status = Status.SharedTrainedModel;
         emit TrainedModelShared(
             _jobPoster,
             _trainingErrorRate,
             msg.sender,
             _id,
-            _trainedModelMagnetLink,
-            
+            _trainedModelMagnetLink
         );
     }
 
@@ -222,7 +220,7 @@ contract JobFactory {
             job.targetErrorRate,
             _id,
             _trainedModelMagnetLink,
-            _testingDatasetMagnetLink,
+            _testingDatasetMagnetLink
         );
     }
 
