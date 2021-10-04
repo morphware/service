@@ -49,7 +49,8 @@ contract JobFactory {
         uint id,
         uint workerReward,
         uint biddingDeadline,
-        uint revealDeadline
+        uint revealDeadline,
+        uint64 clientVersion
     );
 
     event UntrainedModelAndTrainingDatasetShared(
@@ -98,6 +99,7 @@ contract JobFactory {
         address workerNode;
         uint64 targetErrorRate;
         Status status;
+        uint64  clientVersion;
     }
 
     // Client -> Job(s)
@@ -126,7 +128,8 @@ contract JobFactory {
         uint _minimumPayout,
         uint _biddingDeadline,
         uint _revealDeadline,
-        uint _workerReward
+        uint _workerReward,
+        uint64 _clientVersion
     ) public {
         uint jobId = jobs[msg.sender].length;
         vickreyAuction.start(
@@ -139,8 +142,9 @@ contract JobFactory {
             jobId,
             address(0),
             _targetErrorRate,
-            Status.PostedJobDescription
-            ));
+            Status.PostedJobDescription,
+            address(0),
+            _clientVersion));
         emit JobDescriptionPosted(
             msg.sender,
             _estimatedTrainingTime,
@@ -149,7 +153,8 @@ contract JobFactory {
             jobId,
             _workerReward,
             _biddingDeadline,
-            _revealDeadline
+            _revealDeadline,
+            _clientVersion
         );
     }
 
