@@ -163,6 +163,7 @@ contract JobFactory {
         string memory _trainingDatasetMagnetLink
     ) public {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
+        // Add check that auction has ended
         Job memory job = jobs[msg.sender][_id];
         require(job.status == Status.PostedJobDescription,'Job has not been posted');
         job.status = Status.SharedUntrainedModelAndTrainingDataset;
