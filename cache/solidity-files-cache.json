@@ -9,7 +9,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -24,6 +24,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -45,7 +48,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -60,6 +63,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -81,7 +87,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -96,6 +102,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -115,7 +124,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -130,6 +139,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -152,7 +164,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -167,6 +179,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -190,7 +205,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -205,6 +220,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -224,7 +242,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -239,6 +257,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -253,14 +274,14 @@
       ]
     },
     "/Users/hassanmalik/dev/service/contracts/VickreyAuction.sol": {
-      "lastModificationDate": 1633316830416,
-      "contentHash": "c44d404dee6ca8031f4dddf2cc4ee573",
+      "lastModificationDate": 1633317305015,
+      "contentHash": "5d16477dd10a4ed7bca6cda45ac2e539",
       "sourceName": "contracts/VickreyAuction.sol",
       "solcConfig": {
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -275,6 +296,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -289,14 +313,14 @@
       ]
     },
     "/Users/hassanmalik/dev/service/contracts/JobFactory.sol": {
-      "lastModificationDate": 1633316831766,
-      "contentHash": "73f6cf235611f407cfe190c683f77b0b",
+      "lastModificationDate": 1633317700422,
+      "contentHash": "d3928b72bea029031546c923b9b28378",
       "sourceName": "contracts/JobFactory.sol",
       "solcConfig": {
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -311,6 +335,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -333,7 +360,7 @@
         "version": "0.8.4",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 999999
           },
           "outputSelection": {
@@ -348,6 +375,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },

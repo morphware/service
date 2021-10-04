@@ -143,7 +143,6 @@ contract JobFactory {
             address(0),
             _targetErrorRate,
             Status.PostedJobDescription,
-            address(0),
             _clientVersion));
         emit JobDescriptionPosted(
             msg.sender,

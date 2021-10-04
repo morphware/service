@@ -18,35 +18,16 @@ TODO
 
 You will need:
 
-* Node. All of us are using Node v16.x
-  * You may want to use NVM to manage this.
-
-You may want:
-
-* Docker
-  * This makes running the test suite easier
+- Node. All of us are using Node v16.x
+  - You may want to use NVM to manage this.
 
 ## Initial steps
 
 These are steps you should only have to take once.
 
 ```
-npm install
+yarn install
 ```
-
-Running the Ganache CLI via Docker is simpler than running it via `npx`. To do
-so, run the following:
-```
-docker run --detach --publish 8545:8545 trufflesuite/ganache-cli:latest
-```
-
-If you would prefer to run it via `npx` instead, run the following:
-```
-npx ganache-cli
-```
-
-If you do that, you will need to keep a terminal devoted to the Ganache CLI.
-Running the Ganache CLI via Docker doesn't consume a terminal.
 
 ## Every feature branch
 
@@ -63,8 +44,9 @@ of your work there, then create a pull request in GitHub to merge back into
 `main`. You will get at least one approval before merging.
 
 **DO NOT**:
-* Commit and push directly to `main`
-* Merge back into `main` without a reviewer approving
+
+- Commit and push directly to `main`
+- Merge back into `main` without a reviewer approving
 
 If you do any of those things, your commit privileges will be revoked on the
 first offense. If you have accidentally committed to `main` locally, please
@@ -72,9 +54,8 @@ reach out on #dev for help.
 
 ## Running the tests
 
-The unit tests are run with `npm test`. They presume Ganache CLI is running
-(q.v. Initial Steps for more information).
+The unit tests are run with `yarn test:unit`.
 
-Coverage is run with `npm coverage`. Currently, this is not hooked into the
+Coverage is run with `yarn coverage`. Currently, this is not hooked into the
 unit testing process. It will eventually be hooked in where a drop in coverage
 will fail the test run, even if the tests themselves pass.
