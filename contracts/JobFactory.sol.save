@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0
-// vim: noai:ts=4:sw=4
-
 pragma solidity 0.8.4;
 
 import './IERC20.sol';
 import './VickreyAuction.sol';
 
-///@dev This implementation originally described the following scenario,
+///@dev This implementation describes the following scenario,
 ///     for demonstration purposes:
 //
 ///          `_jobPoster` --> `workerNode`
 ///          `_jobPoster` <-- `workerNode`
 //
-///      It now has some notion of validator / `reviewerNodes`.
+///      There are no `reviewerNodes`, in this use-case
 
 ///////////////////////////////////////////////////////////////////////////////
 // Notes for elsewhere
@@ -49,10 +47,7 @@ contract JobFactory {
         address auctionAddress,
         uint16 estimatedTrainingTime,
         uint32 trainingDatasetSize,
-        uint workerReward,
-        uint biddingDeadline,
-        uint revealDeadline,
-        uint64 clientVersion
+        uint workerReward
     );
 
     event UntrainedModelAndTrainingDatasetShared(
@@ -72,27 +67,16 @@ contract JobFactory {
         uint64 trainingErrorRate
     );
 
-    event TestingDatasetShared(
-        address indexed jobPoster,
-        uint indexed id,
-        string trainedModelMagnetLink,
-        string testingDatasetMagnetLink,
-        uint64 targetErrorRate
-    );
-
     event JobApproved(
         address indexed jobPoster,
-        uint id,
-        address indexed workerNode,
-        address indexed validatorNode,
-        string trainedModelMagnetLink 
+        uint indexed id,
+        address indexed workerNode
     );
 
     enum Status {
         PostedJobDescription,
         SharedUntrainedModelAndTrainingDataset,
         SharedTrainedModel,
-        SharedTestingDataset,
         ApprovedJob
     }
 
@@ -102,11 +86,8 @@ contract JobFactory {
         Status status;
         uint64 targetErrorRate;
         address workerNode;
-        uint64  clientVersion;
     }
 
-    // Client -> Job(s)
-    // FIXME: auctionId is per-EVM basis - this is single-threading assumption
     mapping (address => Job[]) public jobs;
 
     IERC20 public token;
@@ -127,10 +108,9 @@ contract JobFactory {
         uint32 _trainingDatasetSize,
         uint64 _targetErrorRate,
         uint _minimumPayout,
-        uint _biddingDeadline,
-        uint _revealDeadline,
-        uint _workerReward,
-        uint64 _clientVersion
+        uint _biddingTimeSpan,
+        uint _revealTimeSpan,
+        uint _workerReward
     ) public {
         // TODO Possible cruft below
         // FIXME
@@ -143,27 +123,22 @@ contract JobFactory {
         uint jobId = jobs[msg.sender].length;
         vickreyAuction.start(
             _minimumPayout,
-            _biddingDeadline,
-            _revealDeadline,
+            _biddingTimeSpan,
+            _revealTimeSpan,
             _workerReward,
             msg.sender);
         jobs[msg.sender].push(Job(
             jobId,
             Status.PostedJobDescription,
             _targetErrorRate,
-            address(0),
-            _clientVersion));
+            address(0)));
         emit JobDescriptionPosted(
             msg.sender,
             jobId,
             address(vickreyAuction),
             _estimatedTrainingTime,
             _trainingDatasetSize,
-            _workerReward,
-            _biddingDeadline,
-            _revealDeadline,
-            _clientVersion
-        );
+            _workerReward);
     }
 
     /// @dev This is being called by `_jobPoster`
@@ -171,6 +146,7 @@ contract JobFactory {
     /// @notice The untrained model and the training dataset have been encrypted
     ///         with the `workerNode` public key and `_jobPoster` private key
     function shareUntrainedModelAndTrainingDataset(
+        address _jobPoster,
         uint _id,
         string memory _untrainedModelMagnetLink,
         string memory _trainingDatasetMagnetLink
@@ -183,7 +159,7 @@ contract JobFactory {
         //(,,,,,,x,) = vickreyAuction.auctions(_jobPoster,_id);
         //jobs[msg.sender][_id].workerNode = vickreyAuction.auctions(_jobPoster,_id).highestBidder;
         //jobs[msg.sender][_id].workerNode = x;
-        (,,,,,,,jobs[msg.sender][_id].workerNode,,) = vickreyAuction.auctions(msg.sender,_id);
+        (,,,,,,jobs[msg.sender][_id].workerNode,) = vickreyAuction.auctions(_jobPoster,_id);
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
             _id,
@@ -196,7 +172,7 @@ contract JobFactory {
 
     /// @dev This is being called by `workerNode`
     //
-    /// TODO @notice The trained model has been encrypted with the `_jobPoster`s
+    /// @notice The trained model has been encrypted with the `_jobPoster`s
     ///         public key and `workerNode` private key
     function shareTrainedModel(
         address _jobPoster,
@@ -215,46 +191,25 @@ contract JobFactory {
             _trainedModelMagnetLink,
             _trainingErrorRate
         );
+
     }
 
     /// @dev This is being called by `_jobPoster`
-    //
-    /// TODO Have `../daemon` look-up the `trainedModelMagnetLink`
-    ///      in the logs instead of re-parameterizing it, below.
-    function shareTestingDataset(
-        uint _id,
-        string memory _trainedModelMagnetLink,
-        string memory _testingDatasetMagnetLink
-    ) public {
-        require(jobs[msg.sender][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
-        jobs[msg.sender][_id].status = Status.SharedTestingDataset;
-        emit TestingDatasetShared(
-            msg.sender,
-            _id,
-            _trainedModelMagnetLink,
-            _testingDatasetMagnetLink,
-            jobs[msg.sender][_id].targetErrorRate
-        );
-    }
-
-    /// @dev This is being called by a validator node
     function approveJob(
         address _jobPoster,
-        uint _id,
-        string memory _trainedModelMagnetLink
+        uint _id
     ) public {
-        require(msg.sender != jobs[_jobPoster][_id].workerNode,'msg.sender cannot equal workerNode');
-        require(jobs[_jobPoster][_id].status == Status.SharedTestingDataset,'Testing dataset has not been shared');
-        jobs[_jobPoster][_id].status = Status.ApprovedJob;
+        require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
+        require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
+        require(jobs[_jobPoster][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
+        jobs[msg.sender][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
         // FIXME
-        //vickreyAuction.payout(_jobPoster,_id);
+        //vickreyAuction.payout();
         emit JobApproved(
-            _jobPoster,
-            _id,
-            jobs[_jobPoster][_id].workerNode,
             msg.sender,
-            _trainedModelMagnetLink             
+            _id,
+            jobs[_jobPoster][_id].workerNode
         );
     }
 }
