@@ -1,9 +1,19 @@
 {
   "name": "service",
   "version": "1.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:morphware/service.git",
-  "author": "<hmalik88> <<hbmalik88@gmail.com>>",
+  "description": "The service contracts for Morphware",
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morphware/service.git"
+  },
+  "author": {
+    "name": "Morphware Engineering",
+    "email": "engineering@morphware.com"
+  },
+  "bugs": {
+    "url": "https://github.com/morphware/service/issues"
+  },
   "license": "MIT",
   "scripts": {
     "clean": "hardhat clean",
