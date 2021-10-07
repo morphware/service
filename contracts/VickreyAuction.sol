@@ -3,21 +3,37 @@
 
 pragma solidity 0.8.4;
 
-import './IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 // TODO Review all usage of `public`
 // TODO Optimize storage writes with memory
 
 contract VickreyAuction {
 
-    IERC20 public token;
+    event AuctionEnded(
+        address indexed endUser,
+        uint auctionId,
+        address winner, 
+        uint secondHighestBid
+    );
 
-    // TODO Pack the following struct
+    event BidPlaced(
+        address indexed endUser,
+        uint indexed auctionId,
+        address indexed bidder
+    );
+
+    event PaidOut(
+        address indexed endUser,
+        uint indexed auctionId,
+        uint amount
+    );
+
     struct Bid {
         bytes32 blindedBid;
-        uint deposit;
         address jobPoster;
         uint auctionId;
+        uint deposit;
     }
 
     /* uint public minimumPayout;
@@ -46,24 +62,7 @@ contract VickreyAuction {
     mapping(bytes32 => Bid[]) public bids;
     mapping(address => uint) public staleBids;
 
-    event AuctionEnded(
-        address indexed endUser,
-        uint auctionId,
-        address winner, 
-        uint secondHighestBid
-    );
-
-    event BidPlaced(
-        address indexed endUser,
-        uint indexed auctionId,
-        address indexed bidder
-    );
-
-    event PaidOut(
-        address indexed endUser,
-        uint indexed auctionId,
-        uint amount
-    );
+    IERC20 public token;
 
     error TooEarly(uint time);
     error TooLate(uint time);
@@ -78,19 +77,15 @@ contract VickreyAuction {
         _;
     }
 
-    // TODO 2 Use `initialize` instead of constructor to make the contract upgradable
     constructor(
         IERC20 _token
     ) {
         token = _token;
     }
 
-    // FIXME 1 Right now, `reward` is just parameterized and there is no check,
-    //         in place; to make sure that the `endUser` is good for the funds
-    uint reward;
-
     // FIXME 1 (continued)
     // Have end-user actually transfer the funds and then check that the reward amount is equal to it
+    // NEED TO FIGURE OUT WHICH CONTRACT WILL HAVE CUSTODY OF DATA SCIENTIST'S FUNDS
     function start(
         uint _minimumPayout,
         uint _biddingDeadline,
@@ -129,6 +124,8 @@ contract VickreyAuction {
         uint allowedAmount = token.allowance(msg.sender,address(this));
         require(allowedAmount >= _amount,'allowedAmount must be greater than or equal to _amount');
         // TODO  1.5 Re-factor `transferFrom` to eliminate gas costs?
+        // NEED TO FIGURE OUT WHETHER WE WANT TO USE INTERNAL ACCOUNTING AND LET USERS WITHDRAW OR
+        // IF WE WANT TO JUST USE TRANSFERFROM
         token.transferFrom(msg.sender,address(this),_amount);
         bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))].push(Bid({
             blindedBid: _blindedBid,
@@ -141,6 +138,8 @@ contract VickreyAuction {
             _auctionId,
             msg.sender);
     }
+
+    // remove the array types for amounts, fake, secret
 
     function reveal(
         address _endUser,
@@ -156,8 +155,6 @@ contract VickreyAuction {
         // uint numberOfBids = bids[msg.sender].length;
         // TODO Uncomment the follow checks:
         // require(_amounts.length == numberOfBids,'_amounts.length must be equal to numberOfBids');
-        // require(_fake.length == numberOfBids,'_fake.length must be equal to numberOfBids');
-        // require(_secret.length == numberOfBids,'_secret.length must be equal to numberOfBids');
         uint refund;
         // for (uint i = 0; i < numberOfBids; i++) {
 
@@ -226,6 +223,9 @@ contract VickreyAuction {
             // TODO 4 Optimize the `transfer` of `leftover` to `highestBidder`
             // TODO 1 Replace the `transfer` invocation with a safer alternative
             token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
+            // possible 2nd transfer where 2nd highest bid amount needs to be transferred to the data scientist
+            // reward - 2nd highest bid goes to the worker node
+            // don't transfer to the data scientist if there's only been one bid
             emit PaidOut(
                 _endUser,
                 _auctionId,
@@ -253,10 +253,6 @@ contract VickreyAuction {
         auctions[_endUser][_auctionId].secondHighestBid = auctions[_endUser][_auctionId].highestBid;
         auctions[_endUser][_auctionId].highestBid = _amount;
         auctions[_endUser][_auctionId].highestBidder = _bidder;
-        // TODO Possible cruft below
-        /* emit BidPlaced(
-            auctions[_endUser][_auctionId].highestBidder,
-            auctions[_endUser][_auctionId].highestBid); */
         auctions[_endUser][_auctionId].bidsPlaced += 1;
         return true;
     }

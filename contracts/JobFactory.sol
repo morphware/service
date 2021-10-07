@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.4;
 
-import './IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './VickreyAuction.sol';
 
 ///@dev This implementation originally described the following scenario,
@@ -41,14 +41,12 @@ import './VickreyAuction.sol';
 
 contract JobFactory {
 
-    VickreyAuction vickreyAuction;
-
     event JobDescriptionPosted(
         address jobPoster,
-        uint id,
-        address auctionAddress,
         uint16 estimatedTrainingTime,
         uint32 trainingDatasetSize,
+        address auctionAddress,
+        uint id,
         uint workerReward,
         uint biddingDeadline,
         uint revealDeadline,
@@ -57,35 +55,35 @@ contract JobFactory {
 
     event UntrainedModelAndTrainingDatasetShared(
         address indexed jobPoster,
-        uint indexed id,
+        uint64 targetErrorRate,
         address indexed workerNode,
+        uint indexed id,
         string untrainedModelMagnetLink,
-        string trainingDatasetMagnetLink,
-        uint64 targetErrorRate
+        string trainingDatasetMagnetLink
     );
 
     event TrainedModelShared(
         address indexed jobPoster,
-        uint indexed id,
+        uint64 trainingErrorRate,
         address indexed workerNode,
-        string trainedModelMagnetLink,
-        uint64 trainingErrorRate
+        uint indexed id,
+        string trainedModelMagnetLink
     );
 
     event TestingDatasetShared(
         address indexed jobPoster,
+        uint64 targetErrorRate,
         uint indexed id,
         string trainedModelMagnetLink,
-        string testingDatasetMagnetLink,
-        uint64 targetErrorRate
+        string testingDatasetMagnetLink
     );
 
     event JobApproved(
         address indexed jobPoster,
-        uint id,
         address indexed workerNode,
         address indexed validatorNode,
-        string trainedModelMagnetLink 
+        string trainedModelMagnetLink,
+        uint id
     );
 
     enum Status {
@@ -95,13 +93,12 @@ contract JobFactory {
         SharedTestingDataset,
         ApprovedJob
     }
-
-    // TODO Struct packing
+    
     struct Job {
         uint auctionId;
-        Status status;
-        uint64 targetErrorRate;
         address workerNode;
+        uint64 targetErrorRate;
+        Status status;
         uint64  clientVersion;
     }
 
@@ -110,6 +107,8 @@ contract JobFactory {
     mapping (address => Job[]) public jobs;
 
     IERC20 public token;
+
+    VickreyAuction vickreyAuction;
 
     constructor(
         IERC20 _token,
@@ -132,14 +131,6 @@ contract JobFactory {
         uint _workerReward,
         uint64 _clientVersion
     ) public {
-        // TODO Possible cruft below
-        // FIXME
-        //uint jobId;
-        /* if (jobs[msg.sender].auctionId != 0) {
-            jobId = jobs[msg.sender].length - 1;
-        } else {
-            jobId = 0;
-        } */
         uint jobId = jobs[msg.sender].length;
         vickreyAuction.start(
             _minimumPayout,
@@ -149,16 +140,16 @@ contract JobFactory {
             msg.sender);
         jobs[msg.sender].push(Job(
             jobId,
-            Status.PostedJobDescription,
-            _targetErrorRate,
             address(0),
+            _targetErrorRate,
+            Status.PostedJobDescription,
             _clientVersion));
         emit JobDescriptionPosted(
             msg.sender,
-            jobId,
-            address(vickreyAuction),
             _estimatedTrainingTime,
             _trainingDatasetSize,
+            address(vickreyAuction),
+            jobId,
             _workerReward,
             _biddingDeadline,
             _revealDeadline,
@@ -176,21 +167,20 @@ contract JobFactory {
         string memory _trainingDatasetMagnetLink
     ) public {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
-        require(jobs[msg.sender][_id].status == Status.PostedJobDescription,'Job has not been posted');
-        jobs[msg.sender][_id].status = Status.SharedUntrainedModelAndTrainingDataset;
-        // TODO Possible cruft below
-        //address x;
-        //(,,,,,,x,) = vickreyAuction.auctions(_jobPoster,_id);
-        //jobs[msg.sender][_id].workerNode = vickreyAuction.auctions(_jobPoster,_id).highestBidder;
-        //jobs[msg.sender][_id].workerNode = x;
-        (,,,,,,,jobs[msg.sender][_id].workerNode,,) = vickreyAuction.auctions(msg.sender,_id);
+        // Add check that auction has ended
+        Job memory job = jobs[msg.sender][_id];
+        require(job.status == Status.PostedJobDescription,'Job has not been posted');
+        job.status = Status.SharedUntrainedModelAndTrainingDataset;
+        (,,,,,,,address workerNode,,) = vickreyAuction.auctions(msg.sender,_id);
+        job.workerNode = workerNode;
+        jobs[msg.sender][_id] = job;
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
+            job.targetErrorRate,
+            workerNode,
             _id,
-            jobs[msg.sender][_id].workerNode,
             _untrainedModelMagnetLink,
-            _trainingDatasetMagnetLink,
-            jobs[msg.sender][_id].targetErrorRate
+            _trainingDatasetMagnetLink
         );
     }
 
@@ -204,16 +194,17 @@ contract JobFactory {
         string memory _trainedModelMagnetLink,
         uint64 _trainingErrorRate
     ) public {
-        require(msg.sender == jobs[_jobPoster][_id].workerNode,'msg.sender must equal workerNode');
-        require(jobs[_jobPoster][_id].status == Status.SharedUntrainedModelAndTrainingDataset,'Untrained model and training dataset has not been shared');
-        require(jobs[_jobPoster][_id].targetErrorRate >= _trainingErrorRate,'targetErrorRate must be greater or equal to _trainingErrorRate');
+        Job memory job = jobs[_jobPoster][_id];
+        require(msg.sender == job.workerNode,'msg.sender must equal workerNode');
+        require(job.status == Status.SharedUntrainedModelAndTrainingDataset,'Untrained model and training dataset has not been shared');
+        require(job.targetErrorRate >= _trainingErrorRate,'targetErrorRate must be greater or equal to _trainingErrorRate');
         jobs[_jobPoster][_id].status = Status.SharedTrainedModel;
         emit TrainedModelShared(
             _jobPoster,
-            _id,
+            _trainingErrorRate,
             msg.sender,
-            _trainedModelMagnetLink,
-            _trainingErrorRate
+            _id,
+            _trainedModelMagnetLink
         );
     }
 
@@ -226,14 +217,15 @@ contract JobFactory {
         string memory _trainedModelMagnetLink,
         string memory _testingDatasetMagnetLink
     ) public {
-        require(jobs[msg.sender][_id].status == Status.SharedTrainedModel,'Trained model has not been shared');
+        Job memory job = jobs[msg.sender][_id];
+        require(job.status == Status.SharedTrainedModel,'Trained model has not been shared');
         jobs[msg.sender][_id].status = Status.SharedTestingDataset;
         emit TestingDatasetShared(
             msg.sender,
+            job.targetErrorRate,
             _id,
             _trainedModelMagnetLink,
-            _testingDatasetMagnetLink,
-            jobs[msg.sender][_id].targetErrorRate
+            _testingDatasetMagnetLink
         );
     }
 
@@ -243,18 +235,20 @@ contract JobFactory {
         uint _id,
         string memory _trainedModelMagnetLink
     ) public {
-        require(msg.sender != jobs[_jobPoster][_id].workerNode,'msg.sender cannot equal workerNode');
-        require(jobs[_jobPoster][_id].status == Status.SharedTestingDataset,'Testing dataset has not been shared');
+        Job memory job = jobs[_jobPoster][_id];
+        require(msg.sender != job.workerNode,'msg.sender cannot equal workerNode');
+        require(job.status == Status.SharedTestingDataset,'Testing dataset has not been shared');
         jobs[_jobPoster][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
         // FIXME
+        // figure out if we want payout to be done here or in the daemon
         //vickreyAuction.payout(_jobPoster,_id);
         emit JobApproved(
             _jobPoster,
-            _id,
-            jobs[_jobPoster][_id].workerNode,
+            job.workerNode,
             msg.sender,
-            _trainedModelMagnetLink             
+            _trainedModelMagnetLink,
+            _id            
         );
     }
 }
