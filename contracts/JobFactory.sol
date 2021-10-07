@@ -132,10 +132,12 @@ contract JobFactory {
         uint64 _clientVersion
     ) public {
         uint jobId = jobs[msg.sender].length;
+        uint biddingDeadline = block.timestamp + 120;
+        uint revealDeadline = block.timestamp + 240;
         vickreyAuction.start(
             _minimumPayout,
-            _biddingDeadline,
-            _revealDeadline,
+            biddingDeadline,
+            revealDeadline,
             _workerReward,
             msg.sender);
         jobs[msg.sender].push(Job(
@@ -151,8 +153,8 @@ contract JobFactory {
             address(vickreyAuction),
             jobId,
             _workerReward,
-            _biddingDeadline,
-            _revealDeadline,
+            biddingDeadline,
+            revealDeadline,
             _clientVersion
         );
     }
