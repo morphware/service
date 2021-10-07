@@ -143,7 +143,6 @@ contract JobFactory {
             address(0),
             _targetErrorRate,
             Status.PostedJobDescription,
-            address(0),
             _clientVersion));
         emit JobDescriptionPosted(
             msg.sender,
@@ -242,6 +241,7 @@ contract JobFactory {
         jobs[_jobPoster][_id].status = Status.ApprovedJob;
         // TODO Possible cruft below
         // FIXME
+        // figure out if we want payout to be done here or in the daemon
         //vickreyAuction.payout(_jobPoster,_id);
         emit JobApproved(
             _jobPoster,
