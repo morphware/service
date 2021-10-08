@@ -20,7 +20,7 @@
     "compile": "hardhat compile",
     "coverage": "hardhat coverage",
     "test": "hardhat test",
-    "test:unit": "hardhat test ./test/unit.js",
+    "test:unit": "hardhat test ./test/*unit.js",
     "deploy:rinkeby": "hardhat run --network rinkeby ./scripts/deploy.js",
     "deploy:mainnet": "hardhat run --network mainnet ./scripts/deploy.js"
   },
@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
+    "chai": "^4.3.4",
     "dotenv": "^10.0.0"
   }
 }
