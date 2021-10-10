@@ -59,7 +59,7 @@ contract VickreyAuction {
     }
 
     mapping(address => Auction[]) public auctions;
-    mapping(bytes32 => Bid[]) public bids;
+    mapping(bytes32 => Bid) public bids;
     mapping(address => uint) public staleBids;
 
     IERC20 public token;
@@ -144,29 +144,23 @@ contract VickreyAuction {
     function reveal(
         address _endUser,
         uint _auctionId,
-        uint[] memory _amounts,
-        bool[] memory _fake,
-        bytes32[] memory _secret
+        uint memory _amount,
+        bool memory _fake,
+        bytes32 memory _secret
     )
         public
         onlyAfter(auctions[_endUser][_auctionId].biddingDeadline)
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
-        // uint numberOfBids = bids[msg.sender].length;
-        // TODO Uncomment the follow checks:
-        // require(_amounts.length == numberOfBids,'_amounts.length must be equal to numberOfBids');
         uint refund;
-        // for (uint i = 0; i < numberOfBids; i++) {
-
-        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))][0];
+        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))];
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
-            (uint amount, bool fake, bytes32 secret) = (_amounts[0], _fake[0], _secret[0]);
-            if (bidToCheck.blindedBid != keccak256(abi.encodePacked(amount, fake, secret))) {
+            if (bidToCheck.blindedBid != keccak256(abi.encodePacked(_amount, _fake, _secret))) {
                 // continue;
                 return;
             }
             refund += bidToCheck.deposit;
-            if (!fake && bidToCheck.deposit >= amount) {
+            if (!_fake && bidToCheck.deposit >= amount) {
                 if (placeBid(_endUser, _auctionId, msg.sender, amount)) {
                     refund -= amount;
                 }
