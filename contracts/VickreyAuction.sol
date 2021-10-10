@@ -164,11 +164,9 @@ contract VickreyAuction {
                 }
             }
             bidToCheck.blindedBid = bytes32(0);
+            // TODO 1 Replace the `transfer` invocation with a safer alternative
+            token.transfer(msg.sender,refund);
         }
-
-        // }
-        // TODO 1 Replace the `transfer` invocation with a safer alternative
-        token.transfer(msg.sender,refund);
     }
 
     function withdraw() public {
