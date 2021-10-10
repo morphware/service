@@ -139,8 +139,6 @@ contract VickreyAuction {
             msg.sender);
     }
 
-    // remove the array types for amounts, fake, secret
-
     function reveal(
         address _endUser,
         uint _auctionId,
