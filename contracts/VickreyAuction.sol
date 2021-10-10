@@ -59,8 +59,8 @@ contract VickreyAuction {
     }
 
     mapping(address => Auction[]) public auctions;
-    mapping(bytes32 => Bid[]) public bids;
-    mapping(address => uint) public staleBids;
+    mapping(bytes32 => Bid[]) private bids;
+    mapping(address => uint) private staleBids;
 
     IERC20 public token;
 
