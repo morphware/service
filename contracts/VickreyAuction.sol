@@ -67,6 +67,7 @@ contract VickreyAuction {
     error TooEarly(uint time);
     error TooLate(uint time);
     error AuctionEndAlreadyCalled();
+    error DoesNotMatchBlindedBid();
 
     modifier onlyBefore(uint _time) {
         if (block.timestamp >= _time) revert TooLate(_time);
@@ -150,12 +151,12 @@ contract VickreyAuction {
         onlyAfter(auctions[_endUser][_auctionId].biddingDeadline)
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
-        uint refund;
         Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))];
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
+            uint refund;
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(_amount, _fake, _secret))) {
                 // continue;
-                return;
+                revert DoesNotMatchBlindedBid();
             }
             refund += bidToCheck.deposit;
             if (!_fake && bidToCheck.deposit >= amount) {
@@ -165,7 +166,7 @@ contract VickreyAuction {
             }
             bidToCheck.blindedBid = bytes32(0);
             // TODO 1 Replace the `transfer` invocation with a safer alternative
-            token.transfer(msg.sender,refund);
+            if (refund > 0) token.transfer(msg.sender,refund);
         }
     }
 
