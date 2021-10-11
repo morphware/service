@@ -155,7 +155,6 @@ contract VickreyAuction {
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
             uint refund;
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(_amount, _fake, _secret))) {
-                // continue;
                 revert DoesNotMatchBlindedBid();
             }
             refund += bidToCheck.deposit;
