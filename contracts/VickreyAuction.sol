@@ -143,24 +143,24 @@ contract VickreyAuction {
     function reveal(
         address _endUser,
         uint _auctionId,
-        uint memory _amount,
-        bool memory _fake,
-        bytes32 memory _secret
+        uint _amount,
+        bool _fake,
+        bytes32 _secret
     )
         public
         onlyAfter(auctions[_endUser][_auctionId].biddingDeadline)
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
-        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))];
+        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))][0];
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
             uint refund;
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(_amount, _fake, _secret))) {
                 revert DoesNotMatchBlindedBid();
             }
             refund += bidToCheck.deposit;
-            if (!_fake && bidToCheck.deposit >= amount) {
-                if (placeBid(_endUser, _auctionId, msg.sender, amount)) {
-                    refund -= amount;
+            if (!_fake && bidToCheck.deposit >= _amount) {
+                if (placeBid(_endUser, _auctionId, msg.sender, _amount)) {
+                    refund -= _amount;
                 }
             }
             bidToCheck.blindedBid = bytes32(0);
