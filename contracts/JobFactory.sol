@@ -173,7 +173,7 @@ contract JobFactory {
         Job memory job = jobs[msg.sender][_id];
         require(job.status == Status.PostedJobDescription,'Job has not been posted');
         job.status = Status.SharedUntrainedModelAndTrainingDataset;
-        (,,,,,,,address workerNode,,) = vickreyAuction.auctions(msg.sender,_id);
+        (,,,,,,,address workerNode,) = vickreyAuction.auctions(msg.sender,_id);
         job.workerNode = workerNode;
         jobs[msg.sender][_id] = job;
         emit UntrainedModelAndTrainingDatasetShared(

@@ -29,6 +29,12 @@ contract VickreyAuction {
         uint amount
     );
 
+    enum Status {
+        isActive,
+        isEndedButNotPaid,
+        isEndedAndPaid
+    }
+
     struct Bid {
         bytes32 blindedBid;
         address jobPoster;
@@ -54,8 +60,7 @@ contract VickreyAuction {
         uint highestBid;
         uint secondHighestBid;
         address highestBidder;
-        bool ended;
-        bool notPaid;
+        Status status;
     }
 
     mapping(address => Auction[]) public auctions;
@@ -105,8 +110,7 @@ contract VickreyAuction {
             highestBid: 0,
             secondHighestBid: 0,
             highestBidder: _endUser,
-            ended: false,
-            notPaid: true
+            status: Status.isActive
         }));
     }
 
@@ -185,13 +189,13 @@ contract VickreyAuction {
         public
         onlyAfter(auctions[_endUser][_auctionId].revealDeadline)
     {
-        if (auctions[_endUser][_auctionId].ended) revert AuctionEndAlreadyCalled();
+        if (auctions[_endUser][_auctionId].status == Status.isActive) revert AuctionEndAlreadyCalled();
         emit AuctionEnded(
             _endUser,
             _auctionId,
             auctions[_endUser][_auctionId].highestBidder,
             auctions[_endUser][_auctionId].secondHighestBid);
-        auctions[_endUser][_auctionId].ended = true;
+        auctions[_endUser][_auctionId].status = Status.isEndedButNotPaid;
     }
 
     /// @dev This should be called by `_endUser`
@@ -201,8 +205,8 @@ contract VickreyAuction {
     )
         public
     {
-        require(auctions[_endUser][_auctionId].ended, 'VickreyAuction has not ended');
-        require(auctions[_endUser][_auctionId].notPaid, 'VickreyAuction has been paid-out');
+        require(auctions[_endUser][_auctionId].status != Status.isActive, 'VickreyAuction has not ended');
+        require(auctions[_endUser][_auctionId].status != Status.isEndedAndPaid, 'VickreyAuction has been paid-out');
         if (auctions[_endUser][_auctionId].bidsPlaced == 0) {
             token.transfer(_endUser, auctions[_endUser][_auctionId].reward);
         } else {
@@ -221,7 +225,7 @@ contract VickreyAuction {
                 _auctionId,
                 workerPay);
         }
-        auctions[_endUser][_auctionId].notPaid = false;
+        auctions[_endUser][_auctionId].status = Status.isEndedAndPaid;
     }
 
     function placeBid(
