@@ -59,7 +59,7 @@ contract VickreyAuction {
     }
 
     mapping(address => Auction[]) public auctions;
-    mapping(bytes32 => Bid[]) private bids;
+    mapping(bytes32 => Bid) private bids;
     mapping(address => uint) private staleBids;
 
     IERC20 public token;
@@ -128,12 +128,12 @@ contract VickreyAuction {
         // NEED TO FIGURE OUT WHETHER WE WANT TO USE INTERNAL ACCOUNTING AND LET USERS WITHDRAW OR
         // IF WE WANT TO JUST USE TRANSFERFROM
         token.transferFrom(msg.sender,address(this),_amount);
-        bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))].push(Bid({
+        bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))] = Bid({
             blindedBid: _blindedBid,
             deposit: _amount,
             jobPoster: _endUser,
             auctionId: _auctionId
-        }));
+        });
         emit BidPlaced(
             _endUser,
             _auctionId,
@@ -151,7 +151,7 @@ contract VickreyAuction {
         onlyAfter(auctions[_endUser][_auctionId].biddingDeadline)
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
-        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))][0];
+        Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))];
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
             uint refund;
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(_amount, _fake, _secret))) {
