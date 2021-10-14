@@ -126,8 +126,6 @@ contract JobFactory {
         uint32 _trainingDatasetSize,
         uint64 _targetErrorRate,
         uint _minimumPayout,
-        uint _biddingDeadline,
-        uint _revealDeadline,
         uint _workerReward,
         uint64 _clientVersion
     ) public {
