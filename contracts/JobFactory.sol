@@ -121,6 +121,7 @@ contract JobFactory {
     /// @dev This is being called by `_jobPoster`
     //
     /// @notice `address(0)` is being passed to `Job` as a placeholder
+    /// @return Returns the bidding deadline and reveal deadline
     function postJobDescription(
         uint16 _estimatedTrainingTime,
         uint32 _trainingDatasetSize,
@@ -128,7 +129,7 @@ contract JobFactory {
         uint _minimumPayout,
         uint _workerReward,
         uint64 _clientVersion
-    ) public {
+    ) public returns (uint, uint){
         uint jobId = jobs[msg.sender].length;
         uint biddingDeadline = block.timestamp + 120;
         uint revealDeadline = block.timestamp + 240;
@@ -155,6 +156,7 @@ contract JobFactory {
             revealDeadline,
             _clientVersion
         );
+        return (biddingDeadline, revealDeadline);
     }
 
     /// @dev This is being called by `_jobPoster`
