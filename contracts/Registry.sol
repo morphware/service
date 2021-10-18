@@ -19,7 +19,7 @@ contract Registry is Ownable {
 
     constructor(
         address _auctionContract,
-        string _clientVersion,
+        string memory _clientVersion,
         address _jobContract,
         uint _biddingDuration,
         uint _revealDuration
