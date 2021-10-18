@@ -17,6 +17,15 @@ contract Registry is Ownable {
     uint public biddingDuration;
     uint public revealDuration;
 
+  /**
+   * @notice Constructor
+   * @param _auctionContract address of Morphware Auction contract
+   * @param _clientVersion string of current Morphware client version
+   * @param _jobContract address of Morphware Job contract
+   * @param _biddingDuration duration amount for an auction
+   * @param _revealDuration duation amount for reveal period after auction end
+   */
+
     constructor(
         address _auctionContract,
         string memory _clientVersion,
