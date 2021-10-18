@@ -17,6 +17,20 @@ contract Registry is Ownable {
     uint public biddingDuration;
     uint public revealDuration;
 
+    constructor(
+        address _auctionContract,
+        string _clientVersion,
+        address _jobContract,
+        uint _biddingDuration,
+        uint _revealDuration
+    ) {
+        auctionContract = _auctionContract;
+        clientVersion = _clientVersion;
+        jobContract = _jobContract;
+        biddingDuration = _biddingDuration;
+        revealDuration = _revealDuration;
+    }
+
 
   /**
    * @notice sets auction contract address
