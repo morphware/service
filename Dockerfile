@@ -12,4 +12,5 @@ COPY . .
 
 EXPOSE 8545
 
+# GanacheCLI is installed as a dependency of Hardhat.
 ENTRYPOINT [ "/usr/src/app/node_modules/.bin/ganache-cli", "-h", "0.0.0.0" ]
