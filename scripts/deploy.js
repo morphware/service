@@ -1,6 +1,12 @@
 const { ethers, run } = require("hardhat");
 
+//variables need to be initialized prior to deployment
+const CLIENT_VERSION;
+const BIDDING_DURATION;
+const REVEAL_DURATION;
+
 async function main() {
+
   await run("compile");
   const [deployer] = await ethers.getSigners();
   console.log(`Deployer: ${deployer.address}`);
@@ -29,6 +35,17 @@ async function main() {
   await jobFactory.deployed();
   console.log(`Job Factory: ${jobFactory.address}`);
 
+    const RegistryFactory = await ethers.getContractFactory("Registry");
+    const registryFactory = await RegistryFactory.deploy(
+      vickreyAuction.address,
+      CLIENT_VERSION,
+      jobFactory.address,
+      BIDDING_DURATION,
+      REVEAL_DURATION
+    );
+    await registryFactory.deployed();
+    console.log(`Registry: ${registryFactory.address}`);
+
   console.log("Waiting to verify...");
   await new Promise((r) => setTimeout(r, 60000));
 
@@ -44,6 +61,16 @@ async function main() {
   await run("verify:verify", {
     address: jobFactory.address,
     constructorArguments: [morphwareToken.address, vickreyAuction.address],
+  });
+  await run("verify:verify", {
+    address: registryFactory.address,
+    constructorArguments: [
+        vickreyAuction.address, 
+        CLIENT_VERSION, 
+        jobFactory.address, 
+        BIDDING_DURATION, 
+        REVEAL_DURATION
+    ],
   });
 }
 
