@@ -86,7 +86,7 @@ contract VickreyAuction {
         _;
     }
 
-    //modifier to prevent bids before provided time
+    //modifier to prevent bids after provided time
     modifier onlyAfter(uint _time) {
         if (block.timestamp <= _time) revert TooEarly(_time);
         _;

@@ -116,6 +116,8 @@ contract JobFactory {
    * @param _trainingDatasetSize uint32 estimated size of dataset
    * @param _targetErrorRate uint64 target error rate
    * @param _minimumPayout uint minimum amount payed out to auction winner
+   * @param _workerReward uint worker reward amount
+   * @param _clientVersion uint64 client version
    */
     function postJobDescription(
         uint16 _estimatedTrainingTime,
@@ -189,6 +191,7 @@ contract JobFactory {
    * @notice Share trained model (called by worker node)
    * @dev The trained model has been encrypted with the `_jobPoster`s public key and `workerNode` private key
    * @param _jobPoster address data scientist's address
+   * @param _id uint job ID
    * @param _trainedModelMagnetLink string trained model link
    * @param _trainingErrorRate uint64 training error rate
    */
@@ -215,7 +218,7 @@ contract JobFactory {
   /**
    * @notice Share testing data (called by data scientist/job poster)
    * @notice The trained model has been encrypted with the `_jobPoster`s public key and `workerNode` private key
-   * @param _jobPoster address data scientist's address
+   * @param _id uint job ID
    * @param _trainedModelMagnetLink string trained model link
    * @param _trainingErrorRate uint64 training error rate
    */
