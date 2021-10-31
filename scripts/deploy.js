@@ -27,7 +27,7 @@ async function main() {
   await vickreyAuction.deployed();
   console.log(`Vickrey Auction: ${vickreyAuction.address}`);
 
-  const JobFactory = await ethers.getContractFactory("JobFactor");
+  const JobFactory = await ethers.getContractFactory("JobFactory");
   const jobFactory = await JobFactory.deploy(
     morphwareToken.address,
     vickreyAuction.address
