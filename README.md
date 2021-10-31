@@ -59,3 +59,21 @@ The unit tests are run with `yarn test:unit`.
 Coverage is run with `yarn coverage`. Currently, this is not hooked into the
 unit testing process. It will eventually be hooked in where a drop in coverage
 will fail the test run, even if the tests themselves pass.
+
+## Notes for future iterations
+
+- Early stopping
+- Vickrey Auction, using the SimpleAuction contract?
+- Active monitoring - Micropayment channel?
+- Implement a form of a reputation score that basically updates how off
+  a given `endUser`'s estimation is of their workload's training time
+- Have `../daemon` look-up the `trainedModelMagnetLink` in the logs instead of re-parameterizing it, below.
+
+`rewardSchedule` is currently thought to be either a:
+
+- Continuous Reward (TBA: worker is rewarded essentially for descending the gradient)
+- Variable Reward (Early Stopping; kind-of a Boolean pay-off structure:
+  as workers will only be rewarded if they have reached a threshold-level of accuracy)
+- Fixed Interval Reward (Active Monitoring)
+- Fixed Ratio Reward (for validators(?); as they will verify a certain number of models over a period of time:
+  even if the selection process for them is pseudo-random?)...encoded as a `string` or a series of `bytes`

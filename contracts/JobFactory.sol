@@ -1,46 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0
 // vim: noai:ts=4:sw=4
-
 pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './VickreyAuction.sol';
 
-///@dev This implementation originally described the following scenario,
-///     for demonstration purposes:
-//
-///          `_jobPoster` --> `workerNode`
-///          `_jobPoster` <-- `workerNode`
-//
-///      It now has some notion of validator / `reviewerNodes`.
-
-///////////////////////////////////////////////////////////////////////////////
-// Notes for elsewhere
-
-/*
-    Early stopping    - Vickrey Auction, using the SimpleAuction contract?
-    Active monitoring - Micropayment channel?
-*/
-
-/* 
-    `rewardSchedule` is currently thought to be either a:
-    - Continuous Reward (TBA: worker is rewarded essentially for descending the gradient)
-    - Variable Reward (Early Stopping; kind-of a Boolean pay-off structure: as workers will
-        only be rewarded if they have reached a threshold-level of accuracy)
-    - Fixed Interval Reward (Active Monitoring)
-    - Fixed Ratio Reward (for validators(?); as they will verify a certain number of models
-        over a period of time: even if the selection process for them is pseudo-random?)
-    ...encoded as a `string` or a series of `bytes`
-*/
-
-/* 
-    Implement a form of a reputation score that basically updates how off 
-    a given `endUser`'s estimation is of their workload's training time 
-*/
-///////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @title Morphware JobFactory
+ * @notice Responsible for creating & storing jobs and sharing model/training data
+ * @dev this implementation originally described the job poster <-> worker node, but now includes validator nodes
+ */
 contract JobFactory {
-
+  /**
+   * @title JobDescriptionPosted
+   * @notice Used to notify worker nodes of a new job
+   */
     event JobDescriptionPosted(
         address jobPoster,
         uint16 estimatedTrainingTime,
@@ -52,7 +26,10 @@ contract JobFactory {
         uint revealDeadline,
         uint64 clientVersion
     );
-
+  /**
+   * @title UntrainedModelAndTrainingDatasetShared
+   * @notice Used to share model and training data with auction winner
+   */
     event UntrainedModelAndTrainingDatasetShared(
         address indexed jobPoster,
         uint64 targetErrorRate,
@@ -61,7 +38,10 @@ contract JobFactory {
         string untrainedModelMagnetLink,
         string trainingDatasetMagnetLink
     );
-
+  /**
+   * @title TrainedModelShared
+   * @notice Used to share trained model data
+   */
     event TrainedModelShared(
         address indexed jobPoster,
         uint64 trainingErrorRate,
@@ -69,7 +49,10 @@ contract JobFactory {
         uint indexed id,
         string trainedModelMagnetLink
     );
-
+  /**
+   * @title TestingDatasetShared
+   * @notice Used to share testing data and trained model data for validator nodes
+   */
     event TestingDatasetShared(
         address indexed jobPoster,
         uint64 targetErrorRate,
@@ -77,7 +60,10 @@ contract JobFactory {
         string trainedModelMagnetLink,
         string testingDatasetMagnetLink
     );
-
+  /**
+   * @title JobApproved
+   * @notice Used to share that a model was validated
+   */
     event JobApproved(
         address indexed jobPoster,
         address indexed workerNode,
@@ -102,25 +88,37 @@ contract JobFactory {
         uint64  clientVersion;
     }
 
-    // Client -> Job(s)
-    // FIXME: auctionId is per-EVM basis - this is single-threading assumption
+    //mapping of account to jobs
     mapping (address => Job[]) public jobs;
 
+    //instance of Morphware token contract
     IERC20 public token;
 
+    //instance of VickreyAuction contract
     VickreyAuction vickreyAuction;
 
+  /**
+   * @notice Constructor
+   * @param _token IERC20 Morphware token
+   * @param _auctionAddress address VickreyAuction contract
+   */
     constructor(
         IERC20 _token,
-        address auctionAddress
+        address _auctionAddress
     ) {
         token = _token;
-        vickreyAuction = VickreyAuction(auctionAddress);
+        vickreyAuction = VickreyAuction(_auctionAddress);
     }
 
-    /// @dev This is being called by `_jobPoster`
-    //
-    /// @notice `address(0)` is being passed to `Job` as a placeholder
+  /**
+   * @notice Post job description (called by data scientist/job poster)
+   * @param _estimatedTrainingTime uint16 estimated time to train model
+   * @param _trainingDatasetSize uint32 estimated size of dataset
+   * @param _targetErrorRate uint64 target error rate
+   * @param _minimumPayout uint minimum amount payed out to auction winner
+   * @param _workerReward uint worker reward amount
+   * @param _clientVersion uint64 client version
+   */
     function postJobDescription(
         uint16 _estimatedTrainingTime,
         uint32 _trainingDatasetSize,
@@ -138,6 +136,7 @@ contract JobFactory {
             revealDeadline,
             _workerReward,
             msg.sender);
+        //`address(0)` is being passed to `Job` as a placeholder
         jobs[msg.sender].push(Job(
             jobId,
             address(0),
@@ -157,10 +156,13 @@ contract JobFactory {
         );
     }
 
-    /// @dev This is being called by `_jobPoster`
-    //
-    /// @notice The untrained model and the training dataset have been encrypted
-    ///         with the `workerNode` public key and `_jobPoster` private key
+  /**
+   * @notice Share untrained model and training data (called by data scientist/job poster)
+   * @dev The untrained model and the training dataset have been encrypted with the `workerNode` public key and `_jobPoster` private key
+   * @param _id uint job (auction) ID
+   * @param _untrainedModelMagnetLink string untrained model link
+   * @param _trainingDatasetMagnetLink string training data link
+   */
     function shareUntrainedModelAndTrainingDataset(
         uint _id,
         string memory _untrainedModelMagnetLink,
@@ -184,10 +186,15 @@ contract JobFactory {
         );
     }
 
-    /// @dev This is being called by `workerNode`
-    //
-    /// TODO @notice The trained model has been encrypted with the `_jobPoster`s
-    ///         public key and `workerNode` private key
+
+  /**
+   * @notice Share trained model (called by worker node)
+   * @dev The trained model has been encrypted with the `_jobPoster`s public key and `workerNode` private key
+   * @param _jobPoster address data scientist's address
+   * @param _id uint job ID
+   * @param _trainedModelMagnetLink string trained model link
+   * @param _trainingErrorRate uint64 training error rate
+   */
     function shareTrainedModel(
         address _jobPoster,
         uint _id,
@@ -208,10 +215,13 @@ contract JobFactory {
         );
     }
 
-    /// @dev This is being called by `_jobPoster`
-    //
-    /// TODO Have `../daemon` look-up the `trainedModelMagnetLink`
-    ///      in the logs instead of re-parameterizing it, below.
+  /**
+   * @notice Share testing data (called by data scientist/job poster)
+   * @notice The trained model has been encrypted with the `_jobPoster`s public key and `workerNode` private key
+   * @param _id uint job ID
+   * @param _trainedModelMagnetLink string trained model link
+   * @param _trainingErrorRate uint64 training error rate
+   */
     function shareTestingDataset(
         uint _id,
         string memory _trainedModelMagnetLink,
@@ -229,7 +239,12 @@ contract JobFactory {
         );
     }
 
-    /// @dev This is being called by a validator node
+  /**
+   * @notice Approve job (called by validator node)
+   * @param _jobPoster address data scientist's address
+   * @param _id uint job (auction) ID
+   * @param _trainedModelMagnetLink string trained model link
+   */
     function approveJob(
         address _jobPoster,
         uint _id,
