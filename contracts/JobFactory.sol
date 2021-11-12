@@ -17,7 +17,7 @@ contract JobFactory {
     event JobDescriptionPosted(
         address jobPoster,
         uint16 estimatedTrainingTime,
-        uint32 trainingDatasetSize,
+        uint64 trainingDatasetSize,
         address auctionAddress,
         uint id,
         uint workerReward,
@@ -108,7 +108,7 @@ contract JobFactory {
   /**
    * @notice Post job description (called by data scientist/job poster)
    * @param _estimatedTrainingTime uint16 estimated time to train model
-   * @param _trainingDatasetSize uint32 estimated size of dataset
+   * @param _trainingDatasetSize uint64 size of dataset in bytes
    * @param _targetErrorRate uint64 target error rate
    * @param _minimumPayout uint minimum amount payed out to auction winner
    * @param _workerReward uint worker reward amount
@@ -116,7 +116,7 @@ contract JobFactory {
    */
     function postJobDescription(
         uint16 _estimatedTrainingTime,
-        uint32 _trainingDatasetSize,
+        uint64 _trainingDatasetSize,
         uint64 _targetErrorRate,
         uint _minimumPayout,
         uint _workerReward,
