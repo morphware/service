@@ -12,13 +12,12 @@ import './VickreyAuction.sol';
  */
 contract JobFactory {
   /**
-   * @title JobDescriptionPosted
    * @notice Used to notify worker nodes of a new job
    */
     event JobDescriptionPosted(
         address jobPoster,
         uint16 estimatedTrainingTime,
-        uint32 trainingDatasetSize,
+        uint64 trainingDatasetSize,
         address auctionAddress,
         uint id,
         uint workerReward,
@@ -27,7 +26,6 @@ contract JobFactory {
         uint64 clientVersion
     );
   /**
-   * @title UntrainedModelAndTrainingDatasetShared
    * @notice Used to share model and training data with auction winner
    */
     event UntrainedModelAndTrainingDatasetShared(
@@ -39,7 +37,6 @@ contract JobFactory {
         string trainingDatasetMagnetLink
     );
   /**
-   * @title TrainedModelShared
    * @notice Used to share trained model data
    */
     event TrainedModelShared(
@@ -50,7 +47,6 @@ contract JobFactory {
         string trainedModelMagnetLink
     );
   /**
-   * @title TestingDatasetShared
    * @notice Used to share testing data and trained model data for validator nodes
    */
     event TestingDatasetShared(
@@ -61,7 +57,6 @@ contract JobFactory {
         string testingDatasetMagnetLink
     );
   /**
-   * @title JobApproved
    * @notice Used to share that a model was validated
    */
     event JobApproved(
@@ -113,7 +108,7 @@ contract JobFactory {
   /**
    * @notice Post job description (called by data scientist/job poster)
    * @param _estimatedTrainingTime uint16 estimated time to train model
-   * @param _trainingDatasetSize uint32 estimated size of dataset
+   * @param _trainingDatasetSize uint64 size of dataset in bytes
    * @param _targetErrorRate uint64 target error rate
    * @param _minimumPayout uint minimum amount payed out to auction winner
    * @param _workerReward uint worker reward amount
@@ -121,7 +116,7 @@ contract JobFactory {
    */
     function postJobDescription(
         uint16 _estimatedTrainingTime,
-        uint32 _trainingDatasetSize,
+        uint64 _trainingDatasetSize,
         uint64 _targetErrorRate,
         uint _minimumPayout,
         uint _workerReward,
@@ -220,7 +215,7 @@ contract JobFactory {
    * @notice The trained model has been encrypted with the `_jobPoster`s public key and `workerNode` private key
    * @param _id uint job ID
    * @param _trainedModelMagnetLink string trained model link
-   * @param _trainingErrorRate uint64 training error rate
+   * @param _testingDatasetMagnetLink string testing data link
    */
     function shareTestingDataset(
         uint _id,

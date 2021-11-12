@@ -9,10 +9,10 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 // TODO Optimize storage writes with memory
 
 contract VickreyAuction {
-  /**
-   * @title AuctionEnded
-   * @notice Used to notify the end of an auction
-   */
+
+    /**
+    * @notice Used to notify the end of an auction
+   */ 
     event AuctionEnded(
         address indexed endUser,
         uint auctionId,
@@ -20,7 +20,6 @@ contract VickreyAuction {
         uint secondHighestBid
     );
   /**
-   * @title BidPlaced
    * @notice Used to notify that a bid was placed
    */
     event BidPlaced(
@@ -29,7 +28,6 @@ contract VickreyAuction {
         address indexed bidder
     );
   /**
-   * @title PaidOut
    * @notice Used to notify that a worker node was paid for a job
    */
     event PaidOut(
