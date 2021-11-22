@@ -300,7 +300,7 @@ contract VickreyAuction {
         if (_amount <= auctions[_endUser][_auctionId].highestBid) {
             return false;
         }
-        if (auctions[_endUser][_auctionId].highestBidder != address(0)) {
+        if (auctions[_endUser][_auctionId].highestBidder != _endUser) {
             address hb = auctions[_endUser][_auctionId].highestBidder;
             staleBids[hb] += auctions[_endUser][_auctionId].highestBid;
         }
