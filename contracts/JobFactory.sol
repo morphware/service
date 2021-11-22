@@ -270,10 +270,8 @@ contract JobFactory is Ownable {
     }
 
   /**
-   * @notice Approve job (called by validator node)
-   * @param _jobPoster address data scientist's address
-   * @param _id uint job (auction) ID
-   * @param _trainedModelMagnetLink string trained model link
+   * @notice Set new registry contract address
+   * @param _newRegistry address new registry address
    */
     function setRegistry(address _newRegistry) public onlyOwner {
         registry = _newRegistry;
