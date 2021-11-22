@@ -4,11 +4,12 @@
 pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 // TODO Review all usage of `public`
 // TODO Optimize storage writes with memory
 
-contract VickreyAuction {
+contract VickreyAuction is Ownable {
 
     /**
     * @notice Used to notify the end of an auction
