@@ -3,14 +3,16 @@
 pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import "@openzeppelin/contracts/access/Ownable.sol";
 import './VickreyAuction.sol';
+import './Registry.sol';
 
 /**
  * @title Morphware JobFactory
  * @notice Responsible for creating & storing jobs and sharing model/training data
  * @dev this implementation originally described the job poster <-> worker node, but now includes validator nodes
  */
-contract JobFactory {
+contract JobFactory is Ownable {
   /**
    * @notice Used to notify worker nodes of a new job
    */
@@ -92,6 +94,9 @@ contract JobFactory {
     //instance of VickreyAuction contract
     VickreyAuction vickreyAuction;
 
+    //address of registry contract
+    address registry;
+
   /**
    * @notice Constructor
    * @param _token IERC20 Morphware token
@@ -99,10 +104,12 @@ contract JobFactory {
    */
     constructor(
         IERC20 _token,
-        address _auctionAddress
+        address _auctionAddress,
+        address _registry
     ) {
         token = _token;
         vickreyAuction = VickreyAuction(_auctionAddress);
+        registry = _registry;
     }
 
   /**
@@ -123,8 +130,8 @@ contract JobFactory {
         uint64 _clientVersion
     ) public {
         uint jobId = jobs[msg.sender].length;
-        uint biddingDeadline = block.timestamp + 120;
-        uint revealDeadline = block.timestamp + 240;
+        uint biddingDeadline = block.timestamp + Registry(registry).biddingDuration();
+        uint revealDeadline = block.timestamp + Registry(registry).revealDuration();
         vickreyAuction.start(
             _minimumPayout,
             biddingDeadline,
@@ -260,5 +267,15 @@ contract JobFactory {
             _trainedModelMagnetLink,
             _id            
         );
+    }
+
+  /**
+   * @notice Approve job (called by validator node)
+   * @param _jobPoster address data scientist's address
+   * @param _id uint job (auction) ID
+   * @param _trainedModelMagnetLink string trained model link
+   */
+    function setRegistry(address _newRegistry) public onlyOwner {
+        registry = _newRegistry;
     }
 }
