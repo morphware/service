@@ -5,7 +5,6 @@ pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
-import './Registry.sol';
 
 // TODO Review all usage of `public`
 // TODO Optimize storage writes with memory
