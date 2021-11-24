@@ -10,19 +10,26 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 contract VickreyAuction {
 
+    /**
+    * @notice Used to notify the end of an auction
+   */ 
     event AuctionEnded(
         address indexed endUser,
         uint auctionId,
         address winner, 
         uint secondHighestBid
     );
-
+  /**
+   * @notice Used to notify that a bid was placed
+   */
     event BidPlaced(
         address indexed endUser,
         uint indexed auctionId,
         address indexed bidder
     );
-
+  /**
+   * @notice Used to notify that a worker node was paid for a job
+   */
     event PaidOut(
         address indexed endUser,
         uint indexed auctionId,
@@ -42,15 +49,6 @@ contract VickreyAuction {
         uint deposit;
     }
 
-    /* uint public minimumPayout;
-    uint public biddingDeadline;
-    uint public revealDeadline;
-
-    address public endUser;
-    address public highestBidder;
-    uint public highestBid;
-    uint public secondHighestBid; */
-
     struct Auction {
         uint minimumPayout;
         uint reward;
@@ -63,10 +61,16 @@ contract VickreyAuction {
         Status status;
     }
 
+    //mapping of data scientist / job poster to auction
     mapping(address => Auction[]) public auctions;
+    
+    //mapping of bid hash to bid
     mapping(bytes32 => Bid) private bids;
+
+    //mapping of account to num of stale bids
     mapping(address => uint) private staleBids;
 
+    //instance of Morphware token
     IERC20 public token;
 
     error TooEarly(uint time);
@@ -74,24 +78,39 @@ contract VickreyAuction {
     error AuctionEndAlreadyCalled();
     error DoesNotMatchBlindedBid();
 
+    //modifier to prevent bids before provided time
     modifier onlyBefore(uint _time) {
         if (block.timestamp >= _time) revert TooLate(_time);
         _;
     }
+
+    //modifier to prevent bids after provided time
     modifier onlyAfter(uint _time) {
         if (block.timestamp <= _time) revert TooEarly(_time);
         _;
     }
 
+  /**
+   * @notice Constructor
+   * @param _token IERC20 Morphware token
+   */
     constructor(
         IERC20 _token
     ) {
         token = _token;
     }
 
-    // FIXME 1 (continued)
-    // Have end-user actually transfer the funds and then check that the reward amount is equal to it
-    // NEED TO FIGURE OUT WHICH CONTRACT WILL HAVE CUSTODY OF DATA SCIENTIST'S FUNDS
+
+    
+  /**
+   * @notice Starts auction
+   * @dev This function is only ever called from the JobFactory contract
+   * @param _minimumPayout uint minimum payout
+   * @param _biddingDeadline uint biddin deadline
+   * @param _revealDeadline uint reveal deadline
+   * @param _reward uint reward
+   * @param _endUser address data scientist/job poster
+   */
     function start(
         uint _minimumPayout,
         uint _biddingDeadline,
@@ -101,6 +120,9 @@ contract VickreyAuction {
     )
         public
     {
+        // FIXME 1 (continued)
+        // Have end-user actually transfer the funds and then check that the reward amount is equal to it
+        // NEED TO FIGURE OUT WHICH CONTRACT WILL HAVE CUSTODY OF DATA SCIENTIST'S FUNDS
         auctions[_endUser].push(Auction({
             minimumPayout: _minimumPayout,
             reward: _reward,
@@ -114,6 +136,14 @@ contract VickreyAuction {
         }));
     }
 
+  /**
+   * @notice Bid on auction
+   * @dev This function is only ever called by a worker node
+   * @param _endUser address data scientist/job poster
+   * @param _auctionId uint auction ID
+   * @param _blindedBid bytes32 blinded bid
+   * @param _amount uint bid amount
+   */
     function bid(
         address _endUser,
         uint _auctionId,
@@ -144,6 +174,14 @@ contract VickreyAuction {
             msg.sender);
     }
 
+  /**
+   * @notice Reveals bids
+   * @param _endUser address data scientist/job poster
+   * @param _auctionId uint auction ID
+   * @param _amount uint bid amount
+   * @param _fake bool whether a bid is fake or not
+   * @param _secret bytes32 bid secret
+   */
     function reveal(
         address _endUser,
         uint _auctionId,
@@ -173,6 +211,9 @@ contract VickreyAuction {
         }
     }
 
+  /**
+   * @notice Withdraw funds for stale bids
+   */
     function withdraw() public {
         uint amount = staleBids[msg.sender];
         if (amount > 0) {
@@ -182,6 +223,11 @@ contract VickreyAuction {
         }
     }
 
+  /**
+   * @notice Ends an auction
+   * @param _endUser address data scientist/job poster
+   * @param _auctionId uint auction ID
+   */
     function auctionEnd(
         address _endUser,
         uint _auctionId
@@ -199,6 +245,12 @@ contract VickreyAuction {
     }
 
     /// @dev This should be called by `_endUser`
+  /**
+   * @notice Pays out auction winner
+   * @dev This function is only ever called by a data scientist/job poster
+   * @param _endUser address data scientist/job poster
+   * @param _auctionId uint auction ID
+   */
     function payout(
         address _endUser,
         uint _auctionId
@@ -228,6 +280,14 @@ contract VickreyAuction {
         auctions[_endUser][_auctionId].status = Status.isEndedAndPaid;
     }
 
+  /**
+   * @notice Helper function to place bid
+   * @dev This function is only ever called by the reveal function
+   * @param _endUser address data scientist/job poster
+   * @param _auctionId uint auction ID
+   * @param _bidder address bidder
+   * @param _amount uint bid amount
+   */
     function placeBid(
         address _endUser,
         uint _auctionId,
