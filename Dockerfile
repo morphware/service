@@ -13,4 +13,4 @@ COPY . .
 EXPOSE 8545
 
 # GanacheCLI is installed as a dependency of Hardhat.
-ENTRYPOINT [ "/usr/src/app/node_modules/.bin/ganache-cli", "-h", "0.0.0.0" ]
+ENTRYPOINT [ "/usr/src/app/node_modules/.bin/ganache-cli", "-h", "0.0.0.0", "--mnemonic", "horn hammer original lemon chapter weird gun pond fortune blush cupboard cat"]
