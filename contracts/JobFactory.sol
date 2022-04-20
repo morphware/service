@@ -4,6 +4,7 @@ pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './VickreyAuction.sol';
+import 'hardhat/console.sol';
 
 /**
  * @title Morphware JobFactory
@@ -75,6 +76,12 @@ contract JobFactory {
         ApprovedJob
     }
     
+    enum AuctionStatus {
+        isActive,
+        isEndedButNotPaid,
+        isEndedAndPaid
+    }
+
     struct Job {
         uint auctionId;
         address workerNode;
@@ -125,19 +132,21 @@ contract JobFactory {
         uint jobId = jobs[msg.sender].length;
         uint biddingDeadline = block.timestamp + 120;
         uint revealDeadline = block.timestamp + 240;
+
         vickreyAuction.start(
             _minimumPayout,
             biddingDeadline,
             revealDeadline,
             _workerReward,
             msg.sender);
-        //`address(0)` is being passed to `Job` as a placeholder
+
         jobs[msg.sender].push(Job(
             jobId,
             address(0),
             _targetErrorRate,
             Status.PostedJobDescription,
             _clientVersion));
+
         emit JobDescriptionPosted(
             msg.sender,
             _estimatedTrainingTime,
@@ -165,12 +174,14 @@ contract JobFactory {
     ) public {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
         // Add check that auction has ended
+        (,,,,,,, address workerNode, ) = vickreyAuction.auctions(msg.sender,_id);
+        // console.log(status);
         Job memory job = jobs[msg.sender][_id];
         require(job.status == Status.PostedJobDescription,'Job has not been posted');
         job.status = Status.SharedUntrainedModelAndTrainingDataset;
-        (,,,,,,,address workerNode,) = vickreyAuction.auctions(msg.sender,_id);
         job.workerNode = workerNode;
         jobs[msg.sender][_id] = job;
+        //TODO GitHub Issue 77. Anybody can view these MagnetURI's. Possible security concern.
         emit UntrainedModelAndTrainingDatasetShared(
             msg.sender,
             job.targetErrorRate,

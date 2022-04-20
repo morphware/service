@@ -36,7 +36,7 @@ contract VickreyAuction {
         uint amount
     );
 
-    enum Status {
+    enum AuctionStatus {
         isActive,
         isEndedButNotPaid,
         isEndedAndPaid
@@ -58,7 +58,7 @@ contract VickreyAuction {
         uint highestBid;
         uint secondHighestBid;
         address highestBidder;
-        Status status;
+        AuctionStatus auctionStatus;
     }
 
     //mapping of data scientist / job poster to auction
@@ -132,7 +132,7 @@ contract VickreyAuction {
             highestBid: 0,
             secondHighestBid: 0,
             highestBidder: _endUser,
-            status: Status.isActive
+            auctionStatus: AuctionStatus.isActive
         }));
     }
 
@@ -194,13 +194,18 @@ contract VickreyAuction {
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
         Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))];
+        //If the trying to reveal a valid sealed bid
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
             uint refund;
+            //If the bid arguments don't match the bid you are trying to reveal
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(_amount, _fake, _secret))) {
                 revert DoesNotMatchBlindedBid();
             }
             refund += bidToCheck.deposit;
+            //If it was a real bid and bid value matches what you said it was
+            //TODO bidToCheck.deposit should be equal to _amount. Why is it >=?
             if (!_fake && bidToCheck.deposit >= _amount) {
+                //Place bid of the now revealed bid
                 if (placeBid(_endUser, _auctionId, msg.sender, _amount)) {
                     refund -= _amount;
                 }
@@ -235,13 +240,13 @@ contract VickreyAuction {
         public
         onlyAfter(auctions[_endUser][_auctionId].revealDeadline)
     {
-        if (auctions[_endUser][_auctionId].status == Status.isActive) revert AuctionEndAlreadyCalled();
+        if (auctions[_endUser][_auctionId].auctionStatus != AuctionStatus.isActive) revert AuctionEndAlreadyCalled();
         emit AuctionEnded(
             _endUser,
             _auctionId,
             auctions[_endUser][_auctionId].highestBidder,
             auctions[_endUser][_auctionId].secondHighestBid);
-        auctions[_endUser][_auctionId].status = Status.isEndedButNotPaid;
+        auctions[_endUser][_auctionId].auctionStatus = AuctionStatus.isEndedButNotPaid;
     }
 
     /// @dev This should be called by `_endUser`
@@ -257,8 +262,8 @@ contract VickreyAuction {
     )
         public
     {
-        require(auctions[_endUser][_auctionId].status != Status.isActive, 'VickreyAuction has not ended');
-        require(auctions[_endUser][_auctionId].status != Status.isEndedAndPaid, 'VickreyAuction has been paid-out');
+        require(auctions[_endUser][_auctionId].auctionStatus != AuctionStatus.isActive, 'VickreyAuction has not ended');
+        require(auctions[_endUser][_auctionId].auctionStatus != AuctionStatus.isEndedAndPaid, 'VickreyAuction has been paid-out');
         if (auctions[_endUser][_auctionId].bidsPlaced == 0) {
             token.transfer(_endUser, auctions[_endUser][_auctionId].reward);
         } else {
@@ -277,7 +282,7 @@ contract VickreyAuction {
                 _auctionId,
                 workerPay);
         }
-        auctions[_endUser][_auctionId].status = Status.isEndedAndPaid;
+        auctions[_endUser][_auctionId].auctionStatus = AuctionStatus.isEndedAndPaid;
     }
 
   /**
@@ -297,11 +302,16 @@ contract VickreyAuction {
         internal
         returns (bool success)
     {
+        // If there is already another higher bidder, don't place the bid
         if (_amount <= auctions[_endUser][_auctionId].highestBid) {
             return false;
         }
+
+        //If there is already another non-poster highest bidder, and you are the new highest bidder
         if (auctions[_endUser][_auctionId].highestBidder != address(0)) {
+            //Get the highest bidders address
             address hb = auctions[_endUser][_auctionId].highestBidder;
+            //TODO why is this +=
             staleBids[hb] += auctions[_endUser][_auctionId].highestBid;
         }
         auctions[_endUser][_auctionId].secondHighestBid = auctions[_endUser][_auctionId].highestBid;
