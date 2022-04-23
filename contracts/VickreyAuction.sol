@@ -5,9 +5,6 @@ pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-// TODO Review all usage of `public`
-// TODO Optimize storage writes with memory
-
 contract VickreyAuction {
 
     /**
@@ -36,7 +33,7 @@ contract VickreyAuction {
         uint amount
     );
 
-    enum Status {
+    enum AuctionStatus {
         isActive,
         isEndedButNotPaid,
         isEndedAndPaid
@@ -58,7 +55,7 @@ contract VickreyAuction {
         uint highestBid;
         uint secondHighestBid;
         address highestBidder;
-        Status status;
+        AuctionStatus auctionStatus;
     }
 
     //mapping of data scientist / job poster to auction
@@ -120,9 +117,11 @@ contract VickreyAuction {
     )
         public
     {
-        // FIXME 1 (continued)
-        // Have end-user actually transfer the funds and then check that the reward amount is equal to it
         // NEED TO FIGURE OUT WHICH CONTRACT WILL HAVE CUSTODY OF DATA SCIENTIST'S FUNDS
+        uint allowedAmount = token.allowance(_endUser,address(this));
+        require(allowedAmount >= _reward,'allowedAmount must be greater than or equal to _reward');
+        token.transferFrom(_endUser,address(this),_reward);
+
         auctions[_endUser].push(Auction({
             minimumPayout: _minimumPayout,
             reward: _reward,
@@ -132,7 +131,7 @@ contract VickreyAuction {
             highestBid: 0,
             secondHighestBid: 0,
             highestBidder: _endUser,
-            status: Status.isActive
+            auctionStatus: AuctionStatus.isActive
         }));
     }
 
@@ -153,7 +152,6 @@ contract VickreyAuction {
         public
         onlyBefore(auctions[_endUser][_auctionId].biddingDeadline)
     {
-        // FIXME Later this should be less than the worker-specific reward
         require(_amount < auctions[_endUser][_auctionId].reward,'_amount must be less than reward');
         require(_amount > auctions[_endUser][_auctionId].minimumPayout,'_amount must be greater than minimumPayout');
         uint allowedAmount = token.allowance(msg.sender,address(this));
@@ -194,13 +192,18 @@ contract VickreyAuction {
         onlyBefore(auctions[_endUser][_auctionId].revealDeadline)
     {
         Bid storage bidToCheck = bids[keccak256(abi.encodePacked(_endUser,_auctionId,msg.sender))];
+        //If the trying to reveal a valid sealed bid
         if (bidToCheck.jobPoster == _endUser && bidToCheck.auctionId == _auctionId) {
             uint refund;
+            //If the bid arguments don't match the bid you are trying to reveal
             if (bidToCheck.blindedBid != keccak256(abi.encodePacked(_amount, _fake, _secret))) {
                 revert DoesNotMatchBlindedBid();
             }
             refund += bidToCheck.deposit;
+            //If it was a real bid and bid value matches what you said it was
+            //TODO bidToCheck.deposit should be equal to _amount. Why is it >=?
             if (!_fake && bidToCheck.deposit >= _amount) {
+                //Place bid of the now revealed bid
                 if (placeBid(_endUser, _auctionId, msg.sender, _amount)) {
                     refund -= _amount;
                 }
@@ -235,13 +238,13 @@ contract VickreyAuction {
         public
         onlyAfter(auctions[_endUser][_auctionId].revealDeadline)
     {
-        if (auctions[_endUser][_auctionId].status == Status.isActive) revert AuctionEndAlreadyCalled();
+        if (auctions[_endUser][_auctionId].auctionStatus != AuctionStatus.isActive) revert AuctionEndAlreadyCalled();
         emit AuctionEnded(
             _endUser,
             _auctionId,
             auctions[_endUser][_auctionId].highestBidder,
             auctions[_endUser][_auctionId].secondHighestBid);
-        auctions[_endUser][_auctionId].status = Status.isEndedButNotPaid;
+        auctions[_endUser][_auctionId].auctionStatus = AuctionStatus.isEndedButNotPaid;
     }
 
     /// @dev This should be called by `_endUser`
@@ -257,27 +260,23 @@ contract VickreyAuction {
     )
         public
     {
-        require(auctions[_endUser][_auctionId].status != Status.isActive, 'VickreyAuction has not ended');
-        require(auctions[_endUser][_auctionId].status != Status.isEndedAndPaid, 'VickreyAuction has been paid-out');
+        require(auctions[_endUser][_auctionId].auctionStatus != AuctionStatus.isActive, 'VickreyAuction has not ended');
+        require(auctions[_endUser][_auctionId].auctionStatus != AuctionStatus.isEndedAndPaid, 'VickreyAuction has been paid-out');
         if (auctions[_endUser][_auctionId].bidsPlaced == 0) {
             token.transfer(_endUser, auctions[_endUser][_auctionId].reward);
         } else {
-            // TODO 1 Replace the `transfer` invocation with a safer alternative
-            uint leftover = auctions[_endUser][_auctionId].highestBid - auctions[_endUser][_auctionId].secondHighestBid;
-            // TODO n Does `auctions[_endUser][_auctionId].reward` need to be set to `0`, like `amount` is in other places?
-            uint workerPay = leftover + auctions[_endUser][_auctionId].reward;
-            // TODO 4 Optimize the `transfer` of `leftover` to `highestBidder`
-            // TODO 1 Replace the `transfer` invocation with a safer alternative
+            uint workerPay = auctions[_endUser][_auctionId].secondHighestBid + auctions[_endUser][_auctionId].highestBid;
+            uint refund = auctions[_endUser][_auctionId].reward - auctions[_endUser][_auctionId].secondHighestBid;
+
             token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
-            // possible 2nd transfer where 2nd highest bid amount needs to be transferred to the data scientist
-            // reward - 2nd highest bid goes to the worker node
-            // don't transfer to the data scientist if there's only been one bid
+            token.transfer(_endUser, refund);
+
             emit PaidOut(
                 _endUser,
                 _auctionId,
                 workerPay);
         }
-        auctions[_endUser][_auctionId].status = Status.isEndedAndPaid;
+        auctions[_endUser][_auctionId].auctionStatus = AuctionStatus.isEndedAndPaid;
     }
 
   /**
@@ -297,11 +296,16 @@ contract VickreyAuction {
         internal
         returns (bool success)
     {
+        // If there is already another higher bidder, don't place the bid
         if (_amount <= auctions[_endUser][_auctionId].highestBid) {
             return false;
         }
+
+        //If there is already another non-poster highest bidder, and you are the new highest bidder
         if (auctions[_endUser][_auctionId].highestBidder != address(0)) {
+            //Get the highest bidders address
             address hb = auctions[_endUser][_auctionId].highestBidder;
+            //TODO why is this +=
             staleBids[hb] += auctions[_endUser][_auctionId].highestBid;
         }
         auctions[_endUser][_auctionId].secondHighestBid = auctions[_endUser][_auctionId].highestBid;
