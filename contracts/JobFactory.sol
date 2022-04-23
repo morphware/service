@@ -4,7 +4,6 @@ pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './VickreyAuction.sol';
-import 'hardhat/console.sol';
 
 /**
  * @title Morphware JobFactory
@@ -55,7 +54,8 @@ contract JobFactory {
         uint64 targetErrorRate,
         uint indexed id,
         string trainedModelMagnetLink,
-        string testingDatasetMagnetLink
+        string testingDatasetMagnetLink,
+        string untrainedModelMagnetLink
     );
   /**
    * @notice Used to share that a model was validated
@@ -175,7 +175,6 @@ contract JobFactory {
         // FIXME require(vickreyAuction.ended(),'Auction has not ended');
         // Add check that auction has ended
         (,,,,,,, address workerNode, ) = vickreyAuction.auctions(msg.sender,_id);
-        // console.log(status);
         Job memory job = jobs[msg.sender][_id];
         require(job.status == Status.PostedJobDescription,'Job has not been posted');
         job.status = Status.SharedUntrainedModelAndTrainingDataset;
@@ -232,7 +231,8 @@ contract JobFactory {
     function shareTestingDataset(
         uint _id,
         string memory _trainedModelMagnetLink,
-        string memory _testingDatasetMagnetLink
+        string memory _testingDatasetMagnetLink,
+        string memory _untrainedModelMagnetLink
     ) public {
         Job memory job = jobs[msg.sender][_id];
         require(job.status == Status.SharedTrainedModel,'Trained model has not been shared');
@@ -242,7 +242,8 @@ contract JobFactory {
             job.targetErrorRate,
             _id,
             _trainedModelMagnetLink,
-            _testingDatasetMagnetLink
+            _testingDatasetMagnetLink,
+            _untrainedModelMagnetLink
         );
     }
 

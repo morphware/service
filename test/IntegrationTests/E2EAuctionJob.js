@@ -480,7 +480,8 @@ describe("Complete E2E Workflow", async () => {
         .shareTestingDataset(
           auctionID,
           trainedModelMagnetLink,
-          testingDatasetMagnetLink
+          testingDatasetMagnetLink,
+          untrainedModelMagnetLink
         )
     ).to.be.revertedWith("Trained model has not been shared");
   });
@@ -521,7 +522,8 @@ describe("Complete E2E Workflow", async () => {
       .shareTestingDataset(
         auctionID,
         trainedModelMagnetLink,
-        testingDatasetMagnetLink
+        testingDatasetMagnetLink,
+        untrainedModelMagnetLink
       );
 
     let { events } = await tx.wait();
@@ -534,6 +536,7 @@ describe("Complete E2E Workflow", async () => {
     expect(TestingDatasetShared[2]).to.equal(auctionID);
     expect(TestingDatasetShared[3]).to.equal(trainedModelMagnetLink);
     expect(TestingDatasetShared[4]).to.equal(testingDatasetMagnetLink);
+    expect(TestingDatasetShared[5]).to.equal(untrainedModelMagnetLink);
   });
 
   it("Worker node cannot validate the job", async () => {
