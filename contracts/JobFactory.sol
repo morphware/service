@@ -208,6 +208,7 @@ contract JobFactory {
         uint64 _trainingErrorRate
     ) public {
         Job memory job = jobs[_jobPoster][_id];
+        require(job.workerNode != address(0), 'Worker Node has not yet been selected');
         require(msg.sender == job.workerNode,'msg.sender must equal workerNode');
         require(job.status == Status.SharedUntrainedModelAndTrainingDataset,'Untrained model and training dataset has not been shared');
         require(job.targetErrorRate >= _trainingErrorRate,'targetErrorRate must be greater or equal to _trainingErrorRate');

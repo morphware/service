@@ -5,9 +5,6 @@ pragma solidity 0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-// TODO Review all usage of `public`
-// TODO Optimize storage writes with memory
-
 contract VickreyAuction {
 
     /**
@@ -120,9 +117,11 @@ contract VickreyAuction {
     )
         public
     {
-        // FIXME 1 (continued)
-        // Have end-user actually transfer the funds and then check that the reward amount is equal to it
         // NEED TO FIGURE OUT WHICH CONTRACT WILL HAVE CUSTODY OF DATA SCIENTIST'S FUNDS
+        uint allowedAmount = token.allowance(_endUser,address(this));
+        require(allowedAmount >= _reward,'allowedAmount must be greater than or equal to _reward');
+        token.transferFrom(_endUser,address(this),_reward);
+
         auctions[_endUser].push(Auction({
             minimumPayout: _minimumPayout,
             reward: _reward,
@@ -153,7 +152,6 @@ contract VickreyAuction {
         public
         onlyBefore(auctions[_endUser][_auctionId].biddingDeadline)
     {
-        // FIXME Later this should be less than the worker-specific reward
         require(_amount < auctions[_endUser][_auctionId].reward,'_amount must be less than reward');
         require(_amount > auctions[_endUser][_auctionId].minimumPayout,'_amount must be greater than minimumPayout');
         uint allowedAmount = token.allowance(msg.sender,address(this));
@@ -267,16 +265,12 @@ contract VickreyAuction {
         if (auctions[_endUser][_auctionId].bidsPlaced == 0) {
             token.transfer(_endUser, auctions[_endUser][_auctionId].reward);
         } else {
-            // TODO 1 Replace the `transfer` invocation with a safer alternative
-            uint leftover = auctions[_endUser][_auctionId].highestBid - auctions[_endUser][_auctionId].secondHighestBid;
-            // TODO n Does `auctions[_endUser][_auctionId].reward` need to be set to `0`, like `amount` is in other places?
-            uint workerPay = leftover + auctions[_endUser][_auctionId].reward;
-            // TODO 4 Optimize the `transfer` of `leftover` to `highestBidder`
-            // TODO 1 Replace the `transfer` invocation with a safer alternative
+            uint workerPay = auctions[_endUser][_auctionId].secondHighestBid + auctions[_endUser][_auctionId].highestBid;
+            uint refund = auctions[_endUser][_auctionId].reward - auctions[_endUser][_auctionId].secondHighestBid;
+
             token.transfer(auctions[_endUser][_auctionId].highestBidder, workerPay);
-            // possible 2nd transfer where 2nd highest bid amount needs to be transferred to the data scientist
-            // reward - 2nd highest bid goes to the worker node
-            // don't transfer to the data scientist if there's only been one bid
+            token.transfer(_endUser, refund);
+
             emit PaidOut(
                 _endUser,
                 _auctionId,
