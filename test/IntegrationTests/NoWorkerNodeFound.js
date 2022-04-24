@@ -44,11 +44,7 @@ describe("No Worker For Auction", async () => {
 
     await morphwareToken.transfer(poster.address, posterBalance);
 
-    const posterBalanceBeforeWithdraw = await morphwareToken.balanceOf(
-      poster.address
-    );
-
-    console.log("FIRST: ", posterBalanceBeforeWithdraw.toString());
+    await morphwareToken.balanceOf(poster.address);
   });
 
   it("Can start an auction", async () => {
