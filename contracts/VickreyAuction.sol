@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
-// vim: noai:ts=4:sw=4
+// SPDX-License-Identifier: UNLICENSED
 
 pragma solidity 0.8.4;
 
