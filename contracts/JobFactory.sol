@@ -130,8 +130,8 @@ contract JobFactory {
         uint64 _clientVersion
     ) public {
         uint jobId = jobs[msg.sender].length;
-        uint biddingDeadline = block.timestamp + 120;
-        uint revealDeadline = block.timestamp + 240;
+        uint biddingDeadline = block.timestamp + 300;
+        uint revealDeadline = block.timestamp + 600;
 
         vickreyAuction.start(
             _minimumPayout,

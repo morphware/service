@@ -279,7 +279,7 @@ describe("Complete E2E Workflow", async () => {
 
   it("Move into revealing period", async () => {
     //Wait for revealing period
-    await network.provider.send("evm_increaseTime", [150]);
+    await network.provider.send("evm_increaseTime", [350]);
     await network.provider.send("evm_mine");
   });
 
@@ -371,7 +371,7 @@ describe("Complete E2E Workflow", async () => {
 
   it("Move past revealing period", async () => {
     //Wait for revealing period
-    await network.provider.send("evm_increaseTime", [220]);
+    await network.provider.send("evm_increaseTime", [350]);
     await network.provider.send("evm_mine");
   });
 
