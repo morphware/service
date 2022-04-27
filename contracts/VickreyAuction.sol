@@ -69,10 +69,14 @@ contract VickreyAuction {
     //instance of Morphware token
     IERC20 public token;
 
+    //address of Job Factory
+    address public jobFactory; 
+
     error TooEarly(uint time);
     error TooLate(uint time);
     error AuctionEndAlreadyCalled();
     error DoesNotMatchBlindedBid();
+    error NotJobFactory();
 
     //modifier to prevent bids before provided time
     modifier onlyBefore(uint _time) {
@@ -86,6 +90,11 @@ contract VickreyAuction {
         _;
     }
 
+    //modifier to ensure that the job factory is the caller/msg.sender
+    modifier onlyJobFactory() {
+        if (msg.sender != jobFactory) revert NotJobFactory();
+    }
+
   /**
    * @notice Constructor
    * @param _token IERC20 Morphware token
@@ -94,6 +103,7 @@ contract VickreyAuction {
         IERC20 _token
     ) {
         token = _token;
+        jobFactory = _jobFactory;
     }
 
 
@@ -115,6 +125,7 @@ contract VickreyAuction {
         address _endUser
     )
         public
+        onlyJobFactory
     {
         // NEED TO FIGURE OUT WHICH CONTRACT WILL HAVE CUSTODY OF DATA SCIENTIST'S FUNDS
         uint allowedAmount = token.allowance(_endUser,address(this));
@@ -246,7 +257,6 @@ contract VickreyAuction {
         auctions[_endUser][_auctionId].auctionStatus = AuctionStatus.isEndedButNotPaid;
     }
 
-    /// @dev This should be called by `_endUser`
   /**
    * @notice Pays out auction winner
    * @dev This function is only ever called by a data scientist/job poster
@@ -276,6 +286,15 @@ contract VickreyAuction {
                 workerPay);
         }
         auctions[_endUser][_auctionId].auctionStatus = AuctionStatus.isEndedAndPaid;
+    }
+
+  /**
+   * @notice Updates the job factory address
+   * @param _newJobFactory new job factory address
+   */
+
+    function setJobFactory(address _newJobFactory) public onlyOwner {
+        jobFactory = _newJobFactory;
     }
 
   /**
