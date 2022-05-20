@@ -1,7 +1,7 @@
 # The reason we're using this image vs. the trufflesuite/ganache-cli:v6.1.0
 # is because it's based on a non-Debian image, which makes life hard.
 # This is a Debian 10 (buster) image
-FROM node:16.9
+FROM node:gallium-buster
 
 WORKDIR /usr/src/app
 
