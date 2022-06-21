@@ -41,7 +41,6 @@ contract JobFactory {
    */
     event TrainedModelShared(
         address indexed jobPoster,
-        uint64 trainingErrorRate,
         address indexed workerNode,
         uint indexed id,
         string trainedModelMagnetLink
@@ -198,23 +197,19 @@ contract JobFactory {
    * @param _jobPoster address data scientist's address
    * @param _id uint job ID
    * @param _trainedModelMagnetLink string trained model link
-   * @param _trainingErrorRate uint64 training error rate
    */
     function shareTrainedModel(
         address _jobPoster,
         uint _id,
-        string memory _trainedModelMagnetLink,
-        uint64 _trainingErrorRate
+        string memory _trainedModelMagnetLink
     ) public {
         Job memory job = jobs[_jobPoster][_id];
         require(job.workerNode != address(0), 'Worker Node has not yet been selected');
         require(msg.sender == job.workerNode,'msg.sender must equal workerNode');
         require(job.status == Status.SharedUntrainedModelAndTrainingDataset,'Untrained model and training dataset has not been shared');
-        require(job.targetErrorRate >= _trainingErrorRate,'targetErrorRate must be greater or equal to _trainingErrorRate');
         jobs[_jobPoster][_id].status = Status.SharedTrainedModel;
         emit TrainedModelShared(
             _jobPoster,
-            _trainingErrorRate,
             msg.sender,
             _id,
             _trainedModelMagnetLink

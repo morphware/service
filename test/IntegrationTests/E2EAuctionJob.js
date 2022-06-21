@@ -425,12 +425,7 @@ describe("Complete E2E Workflow", async () => {
     await expect(
       jobFactory
         .connect(worker2)
-        .shareTrainedModel(
-          poster.address,
-          auctionID,
-          trainedModelMagnetLink,
-          targetErrorRate
-        )
+        .shareTrainedModel(poster.address, auctionID, trainedModelMagnetLink)
     ).to.be.revertedWith("Worker Node has not yet been selected");
   });
 
@@ -464,12 +459,7 @@ describe("Complete E2E Workflow", async () => {
     await expect(
       jobFactory
         .connect(badActorWorker)
-        .shareTrainedModel(
-          poster.address,
-          auctionID,
-          trainedModelMagnetLink,
-          targetErrorRate
-        )
+        .shareTrainedModel(poster.address, auctionID, trainedModelMagnetLink)
     ).to.be.revertedWith("msg.sender must equal workerNode");
   });
 
@@ -489,12 +479,7 @@ describe("Complete E2E Workflow", async () => {
   it("A worker can share the trained model", async () => {
     const tx = await jobFactory
       .connect(worker2)
-      .shareTrainedModel(
-        poster.address,
-        auctionID,
-        trainedModelMagnetLink,
-        targetErrorRate
-      );
+      .shareTrainedModel(poster.address, auctionID, trainedModelMagnetLink);
 
     let { events } = await tx.wait();
     let event = events.pop();
@@ -502,10 +487,9 @@ describe("Complete E2E Workflow", async () => {
 
     expect(event.event).to.equal("TrainedModelShared");
     expect(shareTrainedModel[0]).to.equal(poster.address);
-    expect(shareTrainedModel[1]).to.equal(targetErrorRate);
-    expect(shareTrainedModel[2]).to.equal(worker2.address);
-    expect(shareTrainedModel[3]).to.equal(auctionID);
-    expect(shareTrainedModel[4]).to.equal(trainedModelMagnetLink);
+    expect(shareTrainedModel[1]).to.equal(worker2.address);
+    expect(shareTrainedModel[2]).to.equal(auctionID);
+    expect(shareTrainedModel[3]).to.equal(trainedModelMagnetLink);
   });
 
   it("Cannot approva a job before testing dataset has been shared", async () => {
